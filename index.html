@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pasivos Lab - Mini examen</title>
+<style>
+:root {
+  --navy:#102a63;
+  --blue:#2457c5;
+  --light:#eef4ff;
+  --ink:#162033;
+  --muted:#667085;
+  --card:#ffffff;
+  --good:#157f3b;
+  --good-bg:#e8f8ee;
+  --bad:#bd2c21;
+  --bad-bg:#ffebe8;
+  --warn:#8a5a00;
+  --warn-bg:#fff6d7;
+  --line:#e6eaf2;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family: Arial, Helvetica, sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top left, #dfeaff 0, transparent 30%),
+    linear-gradient(135deg, #f7f9ff 0%, #edf2ff 45%, #f9fbff 100%);
+  padding:18px;
+}
+.app {
+  max-width:980px;
+  margin:auto;
+}
+.hero {
+  background:linear-gradient(135deg, var(--navy), var(--blue));
+  color:white;
+  padding:26px;
+  border-radius:26px;
+  box-shadow:0 18px 40px rgba(16,42,99,.22);
+  position:relative;
+  overflow:hidden;
+}
+.hero:after {
+  content:"";
+  position:absolute;
+  right:-50px;
+  top:-50px;
+  width:180px;
+  height:180px;
+  background:rgba(255,255,255,.12);
+  border-radius:50%;
+}
+h1 { margin:0 0 8px; font-size:32px; }
+.subtitle { margin:0; max-width:720px; opacity:.92; line-height:1.45; }
+.panel {
+  background:rgba(255,255,255,.86);
+  backdrop-filter: blur(10px);
+  border:1px solid rgba(255,255,255,.8);
+  border-radius:24px;
+  padding:22px;
+  box-shadow:0 14px 35px rgba(16,42,99,.12);
+  margin-top:18px;
+}
+.grid {
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:14px;
+}
+.stat {
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+}
+.stat b { display:block; font-size:26px; color:var(--navy); }
+.stat span { color:var(--muted); font-size:14px; }
+.controls {
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  align-items:center;
+  margin-top:18px;
+}
+select {
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid #d8deeb;
+  background:white;
+  font-weight:700;
+  color:var(--ink);
+}
+button {
+  border:0;
+  border-radius:16px;
+  padding:13px 18px;
+  cursor:pointer;
+  font-weight:800;
+  transition:.18s;
+}
+button:hover { transform:translateY(-1px); }
+.primary { background:var(--navy); color:white; }
+.secondary { background:#e9eefb; color:var(--navy); }
+.ghost { background:white; color:var(--navy); border:1px solid var(--line); }
+.hidden { display:none !important; }
+.topbar {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  margin-bottom:14px;
+}
+.pill {
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  background:#eef4ff;
+  color:var(--navy);
+  border:1px solid #d8e4ff;
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:13px;
+  font-weight:800;
+}
+.progress {
+  height:12px;
+  background:#e4e9f5;
+  border-radius:999px;
+  overflow:hidden;
+  margin:14px 0 18px;
+}
+.bar { height:100%; width:0%; background:linear-gradient(90deg, var(--blue), var(--navy)); transition:.3s; }
+.card {
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:22px;
+}
+.question-head {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+.topic { color:var(--blue); font-weight:900; font-size:14px; text-transform:uppercase; letter-spacing:.04em; }
+h2 { margin:8px 0 18px; line-height:1.28; font-size:25px; }
+.option {
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  width:100%;
+  text-align:left;
+  background:#f7f9ff;
+  color:var(--ink);
+  margin:10px 0;
+  border:2px solid transparent;
+  padding:15px;
+  border-radius:18px;
+  font-size:16px;
+}
+.letter {
+  flex:0 0 32px;
+  height:32px;
+  border-radius:50%;
+  background:#e5ecff;
+  color:var(--navy);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+}
+.correct { background:var(--good-bg) !important; border-color:var(--good) !important; }
+.correct .letter { background:var(--good); color:white; }
+.wrong { background:var(--bad-bg) !important; border-color:var(--bad) !important; }
+.wrong .letter { background:var(--bad); color:white; }
+.learn {
+  background:var(--warn-bg);
+  border-left:5px solid #f0b429;
+  padding:15px;
+  border-radius:16px;
+  margin-top:14px;
+  line-height:1.48;
+}
+.learn b { color:var(--warn); }
+.actions { margin-top:14px; display:flex; flex-wrap:wrap; gap:10px; }
+.scorebox {
+  text-align:center;
+  padding:18px;
+}
+.score {
+  font-size:44px;
+  font-weight:900;
+  color:var(--navy);
+  margin:8px 0;
+}
+.review-card {
+  background:white;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  margin-top:12px;
+}
+.formula {
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:12px;
+  margin-top:14px;
+}
+.formula div {
+  background:#f7f9ff;
+  border:1px solid var(--line);
+  padding:14px;
+  border-radius:16px;
+}
+@media (max-width:720px) {
+  body { padding:12px; }
+  h1 { font-size:27px; }
+  h2 { font-size:21px; }
+  .grid, .formula { grid-template-columns:1fr; }
+  .hero, .panel { border-radius:20px; padding:18px; }
+  .topbar, .question-head { flex-direction:column; align-items:flex-start; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="hero">
+    <h1>Pasivos Lab</h1>
+    <p class="subtitle">Mini examen interactivo para practicar pasivos, cuentas por pagar, devengo, provisiones, nómina, impuestos, ITBIS, documentos por pagar, leasing, anticipos y dividendos.</p>
+  </section>
+
+  <section id="start" class="panel">
+    <div class="grid">
+      <div class="stat"><b>10</b><span>preguntas máximo por intento</span></div>
+      <div class="stat"><b>22</b><span>preguntas mezcladas</span></div>
+      <div class="stat"><b>100%</b><span>con explicación para aprender</span></div>
+    </div>
+
+    <div class="formula">
+      <div><b>Regla rápida:</b><br>Pasivo corriente = vence en 12 meses o menos.</div>
+      <div><b>Devengo:</b><br>Se registra cuando nace la obligación, no cuando se paga.</div>
+      <div><b>ITBIS por pagar:</b><br>ITBIS cobrado − ITBIS pagado.</div>
+      <div><b>Nómina neta:</b><br>Salario bruto − retenciones.</div>
+    </div>
+
+    <div class="controls">
+      <label><b>Cantidad:</b></label>
+      <select id="count">
+        <option>5</option>
+        <option selected>10</option>
+      </select>
+      <button class="primary" onclick="startQuiz()">Empezar práctica</button>
+      <button class="ghost" onclick="showStudyMode()">Ver tarjetas de estudio</button>
+    </div>
+  </section>
+
+  <section id="quiz" class="panel hidden">
+    <div class="topbar">
+      <div>
+        <span class="pill" id="counter"></span>
+        <span class="pill" id="currentLevel"></span>
+      </div>
+      <button class="secondary" onclick="restart()">Salir</button>
+    </div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+
+    <div class="card">
+      <div class="question-head">
+        <div>
+          <div class="topic" id="topic"></div>
+          <h2 id="question"></h2>
+        </div>
+      </div>
+      <div id="options"></div>
+      <div id="feedback" class="learn hidden"></div>
+      <div class="actions">
+        <button id="nextBtn" class="primary hidden" onclick="nextQuestion()">Siguiente</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="result" class="panel hidden">
+    <div class="scorebox">
+      <div class="pill">Resultado final</div>
+      <div class="score" id="score"></div>
+      <p id="message"></p>
+      <button class="primary" onclick="startQuiz()">Intentar otra vez</button>
+      <button class="secondary" onclick="reviewMistakes()">Repasar fallos</button>
+      <button class="ghost" onclick="restart()">Inicio</button>
+    </div>
+    <div id="mistakes"></div>
+  </section>
+
+  <section id="study" class="panel hidden">
+    <div class="topbar">
+      <h2 style="margin:0">Tarjetas de estudio</h2>
+      <button class="secondary" onclick="restart()">Volver</button>
+    </div>
+    <div class="review-card"><b>Pasivo:</b> obligación económica que la empresa debe pagar o liquidar en el futuro.</div>
+    <div class="review-card"><b>Pasivo corriente:</b> vence en 12 meses o menos. Ejemplos: proveedores, impuestos, salarios por pagar.</div>
+    <div class="review-card"><b>Pasivo no corriente:</b> vence en más de 12 meses. Ejemplos: préstamo a 3 años, bonos, leasing financiero.</div>
+    <div class="review-card"><b>Acumulación:</b> gasto ya incurrido y obligación cierta, como salarios pendientes.</div>
+    <div class="review-card"><b>Provisión:</b> obligación probable pero estimada, como garantías o litigios.</div>
+    <div class="review-card"><b>Anticipo de clientes:</b> dinero recibido antes de entregar; es pasivo hasta cumplir la entrega.</div>
+  </section>
+</div>
+
+<script>
+const allQuestions = [{"topic": "Concepto básico", "level": "Fácil", "q": "Una empresa recibió una factura de electricidad en diciembre, pero la pagará en enero. ¿Qué debe hacer en diciembre?", "options": ["No registrar nada hasta pagar en enero", "Registrar el gasto y una cuenta por pagar", "Registrar solo la salida de efectivo", "Registrar un ingreso diferido"], "answer": 1, "learn": "Aunque el pago se haga después, la empresa ya consumió el servicio. Por devengo, debe reconocer el gasto y también la obligación pendiente. Eso evita que diciembre parezca mejor de lo que realmente fue."}, {"topic": "Clasificación", "level": "Fácil", "q": "Una deuda con proveedores que se pagará en 60 días se clasifica como:", "options": ["Pasivo corriente", "Pasivo no corriente", "Patrimonio", "Activo corriente"], "answer": 0, "learn": "Es pasivo corriente porque vence dentro de los próximos 12 meses o dentro del ciclo normal de operaciones de la empresa."}, {"topic": "Clasificación", "level": "Medio", "q": "Un préstamo bancario a 3 años se presenta principalmente como:", "options": ["Activo financiero", "Pasivo no corriente", "Ingreso ordinario", "Gasto acumulado"], "answer": 1, "learn": "Como el vencimiento total supera 12 meses, se clasifica como pasivo no corriente. Sin embargo, la parte que vence durante el próximo año debe separarse como porción corriente."}, {"topic": "Devengo", "level": "Medio", "q": "Si una empresa recibe un servicio en noviembre, pero lo pagará en febrero del año siguiente, ¿en qué mes nace el pasivo?", "options": ["Febrero", "Diciembre", "Noviembre", "Cuando haya efectivo disponible"], "answer": 2, "learn": "El pasivo nace en noviembre porque fue cuando la empresa recibió el servicio y asumió la obligación. La fecha de pago no cambia el momento del reconocimiento contable."}, {"topic": "Normas", "level": "Medio", "q": "Una empresa enfrenta una demanda legal. El abogado dice que probablemente perderá y se puede estimar el monto. ¿Qué tratamiento corresponde?", "options": ["Reconocer una provisión", "No hacer nada", "Registrar una venta", "Llevarlo directamente al patrimonio"], "answer": 0, "learn": "Cuando existe una obligación presente, es probable que salgan recursos y se puede estimar el monto, se reconoce una provisión. La provisión es un pasivo estimado."}, {"topic": "Contingencias", "level": "Medio", "q": "Si una obligación depende de un evento futuro incierto y todavía no cumple criterios para registrarse como provisión, normalmente se trata como:", "options": ["Pasivo contingente", "Inventario", "Ingreso ganado", "Caja chica"], "answer": 0, "learn": "Un pasivo contingente es una obligación potencial. No siempre se registra en el balance; muchas veces se revela en notas para informar el riesgo."}, {"topic": "Proveedores", "level": "Fácil", "q": "Una tienda compra mercancía a crédito para venderla luego. ¿Cuál cuenta refleja la obligación con quien vendió la mercancía?", "options": ["Cuentas por cobrar", "Cuentas por pagar a proveedores", "Capital social", "Ventas"], "answer": 1, "learn": "Las cuentas por pagar a proveedores surgen cuando la empresa compra bienes o servicios a crédito relacionados con su operación normal."}, {"topic": "Asiento contable", "level": "Medio", "q": "Se compran mercancías a crédito por RD$30,000. ¿Cuál es el efecto contable principal?", "options": ["Aumenta inventario y aumenta cuentas por pagar", "Disminuye inventario y aumenta banco", "Aumenta ventas y disminuye efectivo", "Aumenta gastos financieros solamente"], "answer": 0, "learn": "La empresa recibió mercancía, por eso aumenta el inventario. Como no pagó de inmediato, también aumenta una obligación: cuentas por pagar."}, {"topic": "Acumulaciones", "level": "Medio", "q": "Los salarios trabajados por empleados, pero aún no pagados, se registran como:", "options": ["Salarios por pagar", "Ventas diferidas", "Inventario obsoleto", "Capital adicional"], "answer": 0, "learn": "Los empleados ya prestaron el servicio de trabajo, por eso la empresa debe reconocer el gasto de nómina y el pasivo de salarios por pagar."}, {"topic": "Provisiones", "level": "Medio", "q": "¿Cuál caso se parece más a una provisión?", "options": ["Una factura recibida con monto exacto", "Una estimación por garantías de productos vendidos", "Una venta cobrada en efectivo", "Un depósito bancario"], "answer": 1, "learn": "La garantía es una obligación probable, pero su monto o fecha pueden ser inciertos. Por eso se estima y se registra como provisión."}, {"topic": "Nómina", "level": "Medio", "q": "Una nómina bruta es RD$100,000. Se retienen RD$10,000 de ISR y RD$7,000 de AFP. ¿Cuánto se debe pagar neto a empleados?", "options": ["RD$100,000", "RD$117,000", "RD$83,000", "RD$17,000"], "answer": 2, "learn": "El salario neto es lo que recibe el empleado después de retenciones: 100,000 - 10,000 - 7,000 = RD$83,000."}, {"topic": "Retenciones", "level": "Medio", "q": "Cuando una empresa retiene ISR o AFP a empleados, ese dinero representa:", "options": ["Un ingreso definitivo de la empresa", "Un pasivo que debe entregarse a la autoridad o entidad correspondiente", "Una pérdida de inventario", "Un aumento de capital"], "answer": 1, "learn": "La empresa solo está reteniendo dinero para luego entregarlo. Por eso se registra como pasivo, no como ingreso propio."}, {"topic": "ITBIS", "level": "Fácil", "q": "Una venta gravada de RD$100,000 genera ITBIS de 18%. ¿Cuánto ITBIS se cobra al cliente?", "options": ["RD$1,800", "RD$18,000", "RD$118,000", "RD$82,000"], "answer": 1, "learn": "El ITBIS se calcula multiplicando la base por 18%: 100,000 × 0.18 = RD$18,000. El cliente pagaría RD$118,000 en total."}, {"topic": "ITBIS", "level": "Medio", "q": "Una empresa cobró RD$180,000 de ITBIS en ventas y pagó RD$126,000 de ITBIS en compras. ¿Cuál es el ITBIS por pagar?", "options": ["RD$306,000", "RD$126,000", "RD$54,000", "RD$180,000"], "answer": 2, "learn": "Se compensa el ITBIS cobrado con el ITBIS pagado. 180,000 - 126,000 = RD$54,000 por pagar."}, {"topic": "Impuestos", "level": "Fácil", "q": "El ITBIS por pagar normalmente es un pasivo corriente porque:", "options": ["Se paga en un plazo corto establecido por ley", "Nunca se paga", "Siempre vence en 5 años", "Es parte del capital social"], "answer": 0, "learn": "Los impuestos generados y aún no liquidados se presentan como pasivos corrientes porque deben pagarse en plazos cercanos."}, {"topic": "ISR", "level": "Medio", "q": "Si una empresa obtiene utilidades netas, el ISR empresarial representa:", "options": ["Una obligación fiscal por pagar", "Una cuenta por cobrar al cliente", "Un inventario disponible", "Un dividendo en acciones"], "answer": 0, "learn": "El ISR nace por la renta o utilidad generada. Mientras no se liquide ante la DGII, se reconoce como impuesto por pagar."}, {"topic": "Documentos por pagar", "level": "Medio", "q": "Un préstamo de RD$300,000 a 3 años se paga en partes iguales. ¿Cuál sería la porción corriente del primer año?", "options": ["RD$100,000", "RD$300,000", "RD$200,000", "RD$30,000"], "answer": 0, "learn": "La porción corriente es la parte que vence dentro de los próximos 12 meses. Si se divide igual: 300,000 ÷ 3 = RD$100,000."}, {"topic": "Leasing", "level": "Medio", "q": "Una empresa firma un leasing financiero por RD$500,000 a 4 años. ¿Cómo debe verse en la clasificación general?", "options": ["Como pasivo a largo plazo, con su porción corriente si aplica", "Como ingreso ganado", "Como gasto sin obligación", "Como cuenta por cobrar"], "answer": 0, "learn": "El leasing financiero genera una obligación de pago. Al ser a 4 años, se considera de largo plazo, separando lo que venza en el próximo año."}, {"topic": "Anticipos", "level": "Medio", "q": "Un cliente entrega RD$10,000 por un pedido que la empresa aún no ha entregado. ¿Qué representa ese dinero?", "options": ["Ingreso ganado de inmediato", "Anticipo de clientes, registrado como pasivo", "Gasto acumulado", "Pérdida del período"], "answer": 1, "learn": "Aunque entró efectivo, la empresa todavía debe entregar el bien o servicio. Hasta cumplir, ese dinero representa una obligación con el cliente."}, {"topic": "Dividendos", "level": "Medio", "q": "La junta directiva declara dividendos por RD$50,000, pero los pagará en 60 días. ¿Qué surge al declararlos?", "options": ["Dividendos por pagar", "Inventario por pagar", "Cuentas por cobrar", "Ventas acumuladas"], "answer": 0, "learn": "Cuando los dividendos se declaran, nace una obligación con los accionistas. Hasta pagarlos, se presentan como pasivo."}, {"topic": "Gestión financiera", "level": "Difícil", "q": "¿Por qué una mala gestión de cuentas por pagar puede afectar la liquidez?", "options": ["Porque puede provocar pagos desordenados, mora o falta de efectivo para operar", "Porque elimina todos los activos automáticamente", "Porque convierte las ventas en patrimonio", "Porque impide registrar inventarios"], "answer": 0, "learn": "Las cuentas por pagar deben planificarse. Si la empresa paga sin control o deja vencer obligaciones, puede afectar el flujo de caja, perder descuentos o generar penalidades."}, {"topic": "Análisis", "level": "Difícil", "q": "¿Por qué no conviene sobreestimar provisiones?", "options": ["Porque puede mostrar menos utilidad y una situación financiera peor de la real", "Porque aumenta el efectivo real", "Porque elimina automáticamente las deudas", "Porque convierte pasivos en activos"], "answer": 0, "learn": "Una provisión demasiado alta reduce la utilidad contable y puede distorsionar la imagen financiera. Las provisiones deben estimarse con criterio técnico."}];
+let quizQuestions = [];
+let current = 0;
+let score = 0;
+let answered = false;
+let mistakes = [];
+const letters = ["A","B","C","D"];
+
+function shuffle(array) {
+  return array.map(v => [Math.random(), v]).sort((a,b) => a[0]-b[0]).map(v => v[1]);
+}
+function hideAll() {
+  ["start","quiz","result","study"].forEach(id => document.getElementById(id).classList.add("hidden"));
+}
+function restart() {
+  hideAll();
+  document.getElementById("start").classList.remove("hidden");
+  document.getElementById("mistakes").innerHTML = "";
+}
+function showStudyMode() {
+  hideAll();
+  document.getElementById("study").classList.remove("hidden");
+}
+function startQuiz() {
+  const n = Math.min(parseInt(document.getElementById("count").value), 10);
+  quizQuestions = shuffle(allQuestions).slice(0, n);
+  current = 0; score = 0; mistakes = [];
+  hideAll();
+  document.getElementById("quiz").classList.remove("hidden");
+  showQuestion();
+}
+function showQuestion() {
+  answered = false;
+  const q = quizQuestions[current];
+  document.getElementById("counter").innerText = `Pregunta ${current + 1} de ${quizQuestions.length}`;
+  document.getElementById("currentLevel").innerText = q.level;
+  document.getElementById("bar").style.width = `${(current / quizQuestions.length) * 100}%`;
+  document.getElementById("topic").innerText = q.topic;
+  document.getElementById("question").innerText = q.q;
+  document.getElementById("feedback").classList.add("hidden");
+  document.getElementById("nextBtn").classList.add("hidden");
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i, btn);
+    optionsDiv.appendChild(btn);
+  });
+}
+function selectAnswer(i, btn) {
+  if (answered) return;
+  answered = true;
+  const q = quizQuestions[current];
+  const buttons = document.querySelectorAll(".option");
+  buttons[q.answer].classList.add("correct");
+  if (i !== q.answer) {
+    btn.classList.add("wrong");
+    mistakes.push({...q, chosen:i});
+  } else {
+    score++;
+  }
+  document.getElementById("feedback").innerHTML = `<b>${i === q.answer ? "Correcto ✅" : "Incorrecto ❌"}</b><br>${q.learn}`;
+  document.getElementById("feedback").classList.remove("hidden");
+  document.getElementById("nextBtn").classList.remove("hidden");
+}
+function nextQuestion() {
+  current++;
+  if (current < quizQuestions.length) showQuestion();
+  else finishQuiz();
+}
+function finishQuiz() {
+  hideAll();
+  document.getElementById("result").classList.remove("hidden");
+  const percent = Math.round((score / quizQuestions.length) * 100);
+  document.getElementById("score").innerText = `${score}/${quizQuestions.length}`;
+  document.getElementById("message").innerText =
+    percent >= 90 ? "Excelente. Dominas muy bien el tema." :
+    percent >= 75 ? "Muy bien. Solo repasa los detalles donde fallaste." :
+    percent >= 60 ? "Vas encaminado, pero necesitas repetir la práctica." :
+    "Conviene repasar las tarjetas y volver a intentarlo.";
+}
+function reviewMistakes() {
+  const div = document.getElementById("mistakes");
+  if (mistakes.length === 0) {
+    div.innerHTML = `<div class="review-card"><b>No tuviste fallos 🎉</b><br>Excelente trabajo.</div>`;
+    return;
+  }
+  div.innerHTML = mistakes.map(m => `
+    <div class="review-card">
+      <div class="topic">${m.topic}</div>
+      <b>${m.q}</b><br><br>
+      Tu respuesta: ${m.options[m.chosen]}<br>
+      Respuesta correcta: <b>${m.options[m.answer]}</b>
+      <div class="learn"><b>Para aprender:</b><br>${m.learn}</div>
+    </div>
+  `).join("");
+}
+</script>
+</body>
+</html>
