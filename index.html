@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contabilidad Financiera II — Cuaderno de Estudio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F4EC;
+    --paper-line:#DCE8DD;
+    --ink:#1E3448;
+    --ink-soft:#4B6072;
+    --red:#A73B3B;
+    --green:#2F6B4F;
+    --gold:#B8862B;
+    --card-bg:#FFFDF8;
+    --shadow:rgba(30,52,72,0.18);
+    --font-display:'Special Elite', cursive;
+    --font-body:'Libre Baskerville', Georgia, serif;
+    --font-mono:'Courier Prime','Courier New',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background-color:var(--paper);
+    background-image:repeating-linear-gradient(to bottom, transparent, transparent 31px, var(--paper-line) 31px, var(--paper-line) 32px);
+    font-family:var(--font-body);
+    color:var(--ink);
+    min-height:100vh;
+    line-height:1.5;
+  }
+  .app-shell{max-width:880px;margin:0 auto;padding:20px 20px 70px;position:relative;}
+  @media (min-width:640px){
+    .app-shell{padding-left:84px;}
+    .app-shell::before{content:'';position:absolute;top:0;bottom:0;left:56px;width:2px;background:var(--red);opacity:0.3;}
+  }
+  button{font-family:inherit;}
+  button:focus-visible, .option-row:focus-visible, input:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+
+  /* Topbar */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
+  .topbar .crumbs{font-family:var(--font-mono);font-size:0.82rem;color:var(--ink-soft);}
+  .link-btn{background:none;border:none;color:var(--ink-soft);cursor:pointer;font-family:var(--font-mono);font-size:0.85rem;text-decoration:underline;padding:4px 2px;}
+  .link-btn:hover{color:var(--ink);}
+
+  /* Home */
+  .home-hero{text-align:center;padding:40px 12px 20px;}
+  .home-hero .eyebrow{font-family:var(--font-mono);font-size:0.78rem;letter-spacing:2px;color:var(--gold);text-transform:uppercase;}
+  .home-hero h1{font-family:var(--font-display);font-size:clamp(1.6rem,5vw,2.7rem);margin:8px 0 6px;color:var(--ink);}
+  .home-hero p.subtitle{font-style:italic;color:var(--ink-soft);margin:0 0 22px;font-size:1.02rem;}
+  .ledger-rule{height:2px;background:var(--gold);width:110px;margin:0 auto 30px;opacity:0.65;}
+  .mode-tabs{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:10px;}
+  .mode-tab{background:var(--card-bg);border:2px solid var(--ink);border-radius:6px 6px 2px 2px;padding:26px 34px;min-width:190px;cursor:pointer;box-shadow:5px 5px 0 var(--shadow);transition:transform 0.15s;font-family:var(--font-display);font-size:1.05rem;color:var(--ink);text-align:center;}
+  .mode-tab:hover{transform:translateY(-4px) rotate(-1deg);}
+  .mode-tab .icon{display:block;font-size:2.1rem;margin-bottom:10px;}
+  .mode-tab .desc{display:block;font-family:var(--font-body);font-style:italic;font-size:0.82rem;color:var(--ink-soft);margin-top:8px;}
+  .home-footer{text-align:center;margin-top:44px;}
+
+  /* Topic list */
+  .section-title{font-family:var(--font-display);font-size:1.3rem;margin:6px 0 4px;}
+  .section-hint{font-family:var(--font-body);font-style:italic;color:var(--ink-soft);margin:0 0 18px;font-size:0.95rem;}
+  .topic-list{display:grid;gap:11px;margin-top:6px;}
+  .topic-row{display:flex;align-items:center;gap:14px;background:var(--card-bg);border:1px solid var(--paper-line);border-left:4px solid var(--ink);padding:15px 17px;border-radius:3px;cursor:pointer;box-shadow:2px 2px 0 var(--shadow);transition:transform 0.12s,border-color 0.12s;text-align:left;width:100%;}
+  .topic-row:hover{transform:translateX(4px);border-left-color:var(--gold);}
+  .topic-row .icon{font-size:1.5rem;flex-shrink:0;}
+  .topic-row .meta{flex:1;}
+  .topic-row .name{font-weight:700;color:var(--ink);}
+  .topic-row .count{display:block;font-family:var(--font-mono);font-size:0.75rem;color:var(--ink-soft);margin-top:2px;}
+  .topic-row .badge{font-family:var(--font-mono);font-size:0.76rem;background:var(--paper);border:1px solid var(--gold);color:var(--gold);padding:3px 9px;border-radius:10px;white-space:nowrap;}
+  .topic-row.general{border-left-color:var(--gold);background:linear-gradient(90deg,#FFF9EC,var(--card-bg));margin-bottom:6px;}
+
+  /* Flashcards */
+  .study-topbar{font-family:var(--font-mono);font-size:0.85rem;color:var(--ink-soft);text-align:center;margin-bottom:6px;}
+  .flashcard-wrap{perspective:1300px;max-width:520px;margin:20px auto;height:300px;}
+  .flashcard{position:relative;width:100%;height:100%;cursor:pointer;transition:transform 0.5s;transform-style:preserve-3d;}
+  .flashcard.flipped{transform:rotateY(180deg);}
+  .flash-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:8px;border:2px solid var(--ink);background:var(--card-bg);box-shadow:5px 5px 0 var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px;text-align:center;}
+  .flash-face.back{transform:rotateY(180deg);background:#FBF6E8;}
+  .flash-face .tag{position:absolute;top:12px;left:14px;font-family:var(--font-mono);font-size:0.68rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1px;}
+  .flash-face .label{font-family:var(--font-mono);font-size:0.72rem;color:var(--gold);letter-spacing:1.5px;margin-bottom:12px;text-transform:uppercase;}
+  .flash-face h2{font-family:var(--font-display);font-size:1.3rem;margin:0;color:var(--ink);}
+  .flash-face p{font-family:var(--font-body);font-size:0.98rem;line-height:1.55;margin:0;color:var(--ink-soft);}
+  .flash-hint{text-align:center;font-family:var(--font-mono);font-size:0.75rem;color:var(--ink-soft);margin-top:-10px;margin-bottom:14px;}
+  .study-nav{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:8px;}
+  .nav-btn{background:var(--ink);color:#fff;border:none;width:42px;height:42px;border-radius:50%;font-size:1.2rem;cursor:pointer;}
+  .nav-btn:disabled{opacity:0.3;cursor:default;}
+  .progress-dots{font-family:var(--font-mono);font-size:0.85rem;color:var(--ink-soft);}
+
+  /* Exam */
+  .progress-bar{height:6px;background:var(--paper-line);border-radius:3px;overflow:hidden;margin-bottom:18px;}
+  .progress-fill{height:100%;background:var(--gold);transition:width 0.3s;}
+  .exam-paper{background:var(--card-bg);border:1px solid var(--paper-line);border-left:4px solid var(--red);border-radius:2px;padding:26px;box-shadow:4px 4px 0 var(--shadow);position:relative;}
+  .exam-paper .qtag{font-family:var(--font-mono);color:var(--red);font-size:0.8rem;margin-bottom:10px;letter-spacing:0.5px;}
+  .exam-paper h3{font-family:var(--font-body);font-weight:700;font-size:1.12rem;line-height:1.45;margin:0 0 20px;color:var(--ink);}
+  .option-list{display:flex;flex-direction:column;gap:10px;}
+  .option-row{display:flex;align-items:center;gap:12px;border:1px solid var(--paper-line);padding:12px 14px;border-radius:4px;cursor:pointer;font-family:var(--font-body);background:#fff;font-size:0.98rem;color:var(--ink);text-align:left;width:100%;}
+  .option-row .letter{font-family:var(--font-mono);font-weight:700;color:var(--ink-soft);width:20px;flex-shrink:0;}
+  .option-row:hover:not(:disabled){border-color:var(--ink);}
+  .option-row.selected{border-color:var(--gold);background:#FFF9EC;}
+  .option-row.correct{border-color:var(--green);background:#EAF5EE;}
+  .option-row.incorrect{border-color:var(--red);background:#FBEAEA;}
+  .option-row:disabled{cursor:default;}
+  .tf-buttons{display:flex;gap:16px;}
+  .tf-btn{flex:1;padding:20px;font-family:var(--font-display);font-size:1.05rem;border:2px solid var(--ink);border-radius:5px;cursor:pointer;background:#fff;color:var(--ink);}
+  .tf-btn:disabled{cursor:default;}
+  .tf-btn.correct{background:#EAF5EE;border-color:var(--green);color:var(--green);}
+  .tf-btn.incorrect{background:#FBEAEA;border-color:var(--red);color:var(--red);}
+  .numeric-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .numeric-row .prefix{font-family:var(--font-mono);font-weight:700;font-size:1.05rem;}
+  .numeric-row input{font-family:var(--font-mono);font-size:1.05rem;padding:10px 12px;border:1px solid var(--ink-soft);border-radius:4px;flex:1;min-width:140px;}
+  .check-btn{margin-top:16px;background:var(--ink);color:#fff;border:none;padding:11px 22px;font-family:var(--font-display);border-radius:4px;cursor:pointer;font-size:0.92rem;}
+  .check-btn:disabled{opacity:0.4;cursor:default;}
+  .stamp{display:inline-block;font-family:var(--font-display);border:3px double;padding:7px 16px;border-radius:6px;transform:rotate(-7deg);font-size:1.02rem;letter-spacing:1px;animation:stampIn 0.4s ease-out;margin-bottom:4px;}
+  .stamp.ok{color:var(--green);border-color:var(--green);}
+  .stamp.bad{color:var(--red);border-color:var(--red);}
+  @keyframes stampIn{0%{transform:scale(2) rotate(-7deg);opacity:0;}60%{transform:scale(0.92) rotate(-7deg);opacity:1;}100%{transform:scale(1) rotate(-7deg);}}
+  .explain-note{margin-top:14px;padding:13px 15px;background:#FFF9EC;border-left:3px solid var(--gold);font-style:italic;color:var(--ink-soft);border-radius:2px;font-size:0.94rem;}
+  .exam-actions{margin-top:20px;text-align:right;}
+
+  /* Results */
+  .results-stamp-wrap{text-align:center;padding:18px 0 28px;}
+  .big-stamp{display:inline-block;font-family:var(--font-display);font-size:1.5rem;border:4px double;padding:14px 28px;border-radius:10px;transform:rotate(-5deg);}
+  .score-line{font-family:var(--font-mono);font-size:1.25rem;margin-top:14px;}
+  .review-toggle{display:block;margin:18px auto 0;}
+  .review-list{margin-top:16px;}
+  .review-item{border-bottom:1px solid var(--paper-line);padding:14px 4px;}
+  .review-item .rtag{font-family:var(--font-mono);font-size:0.72rem;color:var(--ink-soft);text-transform:uppercase;}
+  .review-item .rq{font-weight:700;margin:4px 0 6px;}
+  .review-item .ryour{font-family:var(--font-mono);font-size:0.88rem;}
+  .review-item .ryour.ok{color:var(--green);}
+  .review-item .ryour.bad{color:var(--red);}
+  .review-item .rexplain{font-style:italic;color:var(--ink-soft);font-size:0.9rem;margin-top:6px;}
+
+  /* Buttons */
+  .btn{font-family:var(--font-display);background:var(--ink);color:#fff;border:none;padding:12px 22px;border-radius:4px;cursor:pointer;font-size:0.92rem;}
+  .btn.secondary{background:transparent;color:var(--ink);border:2px solid var(--ink);}
+  .btn.gold{background:var(--gold);}
+  .actions-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;justify-content:center;}
+  .empty-note{text-align:center;color:var(--ink-soft);font-style:italic;padding:40px 10px;}
+</style>
+</head>
+<body>
+<div class="app-shell" id="app"></div>
+
+<script>
+/* ============== DATA ============== */
+const TOPICS = [
+  {id:'fundamentos', name:'Fundamentos y Ciclo Contable', icon:'📘'},
+  {id:'efectivo', name:'TEMA II: El Efectivo', icon:'💵'},
+  {id:'cxc', name:'TEMA 3: Cuentas por Cobrar', icon:'🧾'},
+  {id:'inventario', name:'TEMA 4: Inventario', icon:'📦'},
+  {id:'ppe', name:'TEMA 5: PP&E y Depreciación', icon:'🏭'},
+  {id:'intangibles', name:'TEMA 6: Activos Intangibles', icon:'💡'},
+  {id:'otrosactivos', name:'TEMA 7: Otros Activos', icon:'🗂️'},
+  {id:'pasivos', name:'TEMA 8: Pasivos', icon:'📉'},
+  {id:'patrimonio', name:'TEMA 9: Patrimonio', icon:'🏛️'},
+];
+function topicName(id){ const t = TOPICS.find(x=>x.id===id); return t? t.name : id; }
+function topicIcon(id){ const t = TOPICS.find(x=>x.id===id); return t? t.icon : '📄'; }
+
+const FLASHCARDS = {
+  fundamentos: [
+    {term:`Ecuación Contable`, def:`Activo = Pasivo + Patrimonio. Es la base de todo el sistema de partida doble: los recursos de la empresa (activos) siempre están financiados por deudas (pasivos) o por los dueños (patrimonio).`},
+    {term:`Partida Doble`, def:`Cada transacción se registra en al menos dos cuentas: un débito y un crédito de igual monto. Así la ecuación contable siempre permanece en equilibrio.`},
+    {term:`Principio de Devengado`, def:`Los ingresos y gastos se reconocen cuando ocurren, sin importar cuándo se cobra o se paga en efectivo. Ej.: un servicio prestado en diciembre se registra como ingreso de diciembre aunque se cobre en enero.`},
+    {term:`Principio de Prudencia`, def:`Las pérdidas se registran tan pronto se conocen, pero las ganancias solo cuando se realizan efectivamente.`},
+    {term:`Ciclo Contable`, def:`Proceso de nueve etapas: transacción → libro diario → libro mayor → balanza de comprobación → ajustes → balanza ajustada → estados financieros → cierre → apertura del nuevo ciclo.`},
+    {term:`Los Cuatro Estados Financieros`, def:`Balance General, Estado de Resultados, Estado de Flujo de Efectivo y Estado de Cambios en el Patrimonio.`},
+    {term:`Principio de Uniformidad`, def:`Las políticas contables (como el método de depreciación o de inventario) deben aplicarse igual de un período a otro para que la información sea comparable.`},
+    {term:`Principio de Entidad`, def:`La contabilidad registra las operaciones de la empresa como una unidad independiente, separada de sus propietarios. Ej.: un retiro personal del dueño no afecta los registros de la empresa, solo se registra como retiro de patrimonio.`},
+    {term:`Principio de Período Contable`, def:`La información financiera debe prepararse en períodos definidos (mes, trimestre, año), dividiendo la vida de la empresa para reflejar ingresos y gastos con precisión, sin importar cuándo se cobran o pagan.`},
+    {term:`Principio de Comparabilidad`, def:`La información financiera de una entidad debe poder compararse con la de otros períodos propios y con la de otras entidades similares, aplicando los mismos criterios contables.`},
+  ],
+  efectivo: [
+    {term:`Efectivo`, def:`Comprende la moneda de curso legal, nacional o extranjera, los depósitos bancarios disponibles y otros instrumentos de alta liquidez con riesgo insignificante de cambio en su valor.`},
+    {term:`Clasificación del Efectivo`, def:`Efectivo en caja, depósitos bancarios (cuentas corrientes o de ahorro) y equivalentes de efectivo (inversiones a corto plazo de alta liquidez).`},
+    {term:`Fondo de Caja Chica`, def:`Fondo fijo establecido para cubrir pagos menores y urgentes que no justifican la emisión de un cheque o transferencia bancaria.`},
+    {term:`Conciliación Bancaria`, def:`Proceso de comparar los registros contables de la empresa con el estado de cuenta bancario para identificar y corregir discrepancias, como depósitos en tránsito o cheques pendientes.`},
+    {term:`NIC 7`, def:`Norma principal sobre el efectivo. Define qué se considera efectivo y equivalentes, y clasifica los flujos en actividades operativas, de inversión y de financiación.`},
+    {term:`Efectivo en Moneda Extranjera`, def:`Debe convertirse a la moneda funcional de la empresa usando el tipo de cambio oficial vigente en la fecha de los estados financieros.`},
+    {term:`Presentación en el Balance`, def:`El efectivo y sus equivalentes se presentan como la primera partida del activo corriente, por su alta liquidez, a su valor nominal.`},
+    {term:`Depósito en Tránsito`, def:`Depósito ya registrado en los libros de la empresa que todavía no aparece en el estado de cuenta bancario al momento de la conciliación.`},
+    {term:`Instrumentos Financieros de Alta Liquidez`, def:`Instrumentos que la entidad puede convertir en efectivo de forma inmediata y con riesgo poco importante, como bonos, acciones, forwards u opciones financieras.`},
+    {term:`Reposición del Fondo de Caja Chica`, def:`Al agotarse el fondo, se presentan los comprobantes de los gastos realizados y se repone exactamente el monto gastado para volver al monto fijo original.`},
+  ],
+  cxc: [
+    {term:`Cuentas por Cobrar`, def:`Derechos exigibles a corto o largo plazo que una empresa posee frente a clientes u otras entidades por ventas de bienes o servicios a crédito.`},
+    {term:`Clasificación`, def:`Comerciales (ventas ordinarias) o no comerciales (préstamos a empleados/accionistas); a corto plazo (menos de un año) o a largo plazo.`},
+    {term:`Métodos de Estimación de Incobrables`, def:`Porcentaje sobre el total de cuentas por cobrar, o estimación individual analizando cada cuenta según antigüedad, historial de pago y situación del deudor.`},
+    {term:`Factoring`, def:`Venta de las cuentas por cobrar a una entidad financiera para obtener liquidez inmediata. Puede ser con recurso (la empresa asume el riesgo) o sin recurso (el factor lo asume).`},
+    {term:`Documentos por Cobrar`, def:`Títulos formales (letras, pagarés) que respaldan un crédito y devengan intereses.`},
+    {term:`Límite Legal en RD (Ley 11-92)`, def:`La reserva para cuentas incobrables no puede exceder el 4% del saldo de cuentas por cobrar a clientes al cierre, y debe estar debidamente documentada.`},
+    {term:`Presentación Neta`, def:`Las cuentas por cobrar se presentan en el activo corriente, descontando la provisión para cuentas incobrables (CxC neta = CxC bruta − provisión).`},
+    {term:`Notas Aclaratorias en CxC`, def:`En las notas a los estados financieros se debe revelar la política de crédito, el método de estimación de incobrables, el detalle de clientes principales y las tasas de interés de los documentos por cobrar.`},
+    {term:`Documentos por Cobrar vs. Cuentas por Cobrar`, def:`Los documentos por cobrar son títulos formales (letras, pagarés) que devengan intereses explícitos; las cuentas por cobrar comunes normalmente no generan interés.`},
+    {term:`Control Interno de CxC`, def:`Incluye políticas de crédito claras, verificación de solvencia del cliente, conciliaciones periódicas y seguimiento de pagos vencidos (ej.: recordatorios automáticos de cobro).`},
+  ],
+  inventario: [
+    {term:`Inventarios`, def:`Bienes tangibles que se mantienen para la venta en el curso ordinario del negocio, o para ser consumidos en la producción (materias primas, productos en proceso, productos terminados).`},
+    {term:`NIC 2`, def:`Norma que regula cómo valorar los inventarios, los métodos permitidos (PEPS, Promedio Ponderado) y el reconocimiento del deterioro cuando el valor neto realizable es menor que el costo.`},
+    {term:`PEPS (FIFO)`, def:`Primero en Entrar, Primero en Salir: los primeros inventarios comprados son los primeros en venderse.`},
+    {term:`UEPS (LIFO)`, def:`Último en Entrar, Primero en Salir: los últimos inventarios comprados son los primeros en salir. No es aceptado fiscalmente por la DGII en República Dominicana.`},
+    {term:`Promedio Ponderado`, def:`Se promedia el costo de todas las unidades disponibles para la venta, dividiendo el costo total entre el total de unidades.`},
+    {term:`Sistema Periódico vs. Perpetuo`, def:`Periódico: el inventario se actualiza solo al final del período. Perpetuo: se actualiza continuamente con cada movimiento, por ejemplo con lector de código de barras.`},
+    {term:`Inventario Obsoleto`, def:`Inventario que ha perdido valor comercial, como productos tecnológicos desfasados almacenados por mucho tiempo; se debe reconocer su deterioro.`},
+    {term:`Costo Estándar vs. Costo Real`, def:`Costo estándar: costo predeterminado usado para presupuestos y control. Costo real: costo efectivamente incurrido (materiales, mano de obra, gastos generales reales).`},
+    {term:`Efecto de la Inflación en Inventarios`, def:`La inflación puede alterar el valor real del inventario, afectando los costos y la utilidad si no se ajustan correctamente.`},
+    {term:`Kardex o Tarjeta de Inventario`, def:`Documento que lleva el control de entradas, salidas y saldos de inventario, registrando fecha, cantidad, costo unitario y saldo.`},
+  ],
+  ppe: [
+    {term:`Depreciación`, def:`Proceso contable que distribuye el costo de un activo fijo tangible a lo largo de su vida útil, reflejando su desgaste, uso u obsolescencia.`},
+    {term:`Fórmula de Línea Recta`, def:`Depreciación anual = (Costo del activo − Valor de recuperación) ÷ Vida útil.`},
+    {term:`Valor en Libros`, def:`Costo del activo menos su depreciación acumulada.`},
+    {term:`Valor de Recuperación (Residual)`, def:`Importe estimado que la empresa espera obtener al final de la vida útil del activo, después de deducir los costos de venta.`},
+    {term:`Métodos de Depreciación`, def:`Línea recta (gasto constante), número de dígitos (mayor gasto al inicio), horas trabajadas y unidades producidas (según el uso real del activo).`},
+    {term:`Costo Capitalizable`, def:`Incluye el precio de compra más todos los costos necesarios para dejar el activo listo para su uso: instalación, transporte, montaje y pruebas.`},
+    {term:`Ganancia o Pérdida en Disposición`, def:`Se calcula como la diferencia entre el valor de realización (venta) y el valor en libros del activo al momento de retirarlo.`},
+    {term:`Retiro de Activos Fijos`, def:`Cuando se vende, pierde valor o se desecha un activo, se elimina el activo y su depreciación acumulada de los libros, registrando la ganancia o pérdida si aplica.`},
+    {term:`Depreciación Acelerada`, def:`Se aplica cuando el ciclo de innovación u obsolescencia de un activo es muy corto (ej.: equipos de cómputo de 2-3 años), reconociendo mayor gasto en los primeros años.`},
+    {term:`Causas Aceptadas de Depreciación`, def:`Uso, obsolescencia y deterioro natural son las causas que justifican depreciar un activo fijo tangible.`},
+  ],
+  intangibles: [
+    {term:`Activo Intangible`, def:`Bien no físico que otorga beneficios económicos futuros: patentes, marcas, licencias, software, goodwill, entre otros.`},
+    {term:`NIC 38`, def:`Norma que regula el reconocimiento, medición, amortización, deterioro y revelación de los activos intangibles.`},
+    {term:`Requisitos de Reconocimiento`, def:`Un intangible debe ser identificable, estar controlado por la empresa y generar beneficios económicos futuros.`},
+    {term:`Fórmula de Amortización`, def:`Amortización anual = Costo total del activo intangible ÷ Vida útil (en años).`},
+    {term:`Vida Útil Indeterminada`, def:`Si no puede determinarse la vida útil de un intangible, el Reglamento 139-98 exige amortizarlo en un período no menor de 10 años.`},
+    {term:`Goodwill (Plusvalía)`, def:`Solo se reconoce contablemente cuando surge de la adquisición de otra empresa, pagando por encima del valor razonable de sus activos netos.`},
+    {term:`Tipos de Intangibles`, def:`Patentes (exclusividad de una invención), marcas registradas, nombres comerciales, licencias y franquicias, software, y goodwill.`},
+    {term:`Software Desarrollado o Adquirido`, def:`Programas informáticos creados internamente o comprados; se capitalizan como intangibles si cumplen los criterios de vida útil y beneficio económico, y se amortizan según su uso.`},
+    {term:`Licencias y Franquicias`, def:`Derechos contractuales para usar activos ajenos (tecnología, marca) o replicar un modelo de negocio; generan regalías o ingresos recurrentes y se registran como intangibles al adquirirse.`},
+    {term:`Documentación de Respaldo Fiscal`, def:`Para que la DGII acepte la amortización de un intangible, debe existir factura, contrato o derecho de uso registrado, y estar contabilizado como parte del activo.`},
+  ],
+  otrosactivos: [
+    {term:`Activos Corrientes`, def:`Se espera convertirlos en efectivo, consumirlos o venderlos dentro de los 12 meses siguientes al cierre del ejercicio.`},
+    {term:`Activos No Corrientes`, def:`Recursos que generarán beneficios económicos a largo plazo, más de un año: activos diferidos, depósitos en garantía a largo plazo, etc.`},
+    {term:`Gastos Pagados por Anticipado`, def:`Pagos por bienes o servicios que se consumirán en el futuro. Se registran como activo y se reconocen como gasto conforme se consumen.`},
+    {term:`Activos Diferidos`, def:`Costos que generarán beneficios en varios períodos futuros; se capitalizan como activos no corrientes y se amortizan.`},
+    {term:`Principio de Devengo Aplicado`, def:`Los gastos se reconocen cuando ocurren (se consumen), no cuando se pagan en efectivo.`},
+    {term:`Ejemplos de Activo Corriente`, def:`Seguros pagados por anticipado, créditos fiscales recuperables, depósitos en garantía a corto plazo.`},
+    {term:`Ejemplos de Activo No Corriente`, def:`Gastos de organización, estudios de factibilidad, depósitos en garantía a largo plazo, derechos de uso de intangibles.`},
+    {term:`Créditos Fiscales Recuperables`, def:`Saldos a favor de la empresa ante el fisco (ej.: ITBIS a favor) que se compensarán o recuperarán a corto plazo; se clasifican como otros activos corrientes.`},
+    {term:`Mercaderías en Consignación`, def:`Bienes entregados a un tercero para su venta que siguen siendo propiedad de la empresa hasta que se venden; se consideran recuperables en el corto plazo.`},
+    {term:`NIC 16 y NIC 38 en Activos Diferidos`, def:`La NIC 16 aplica a activos tangibles diferidos (mejoras en propiedades arrendadas) y la NIC 38 a activos intangibles diferidos (gastos de desarrollo capitalizables).`},
+  ],
+  pasivos: [
+    {term:`Pasivo`, def:`Obligación económica de la empresa, surgida de transacciones pasadas, que se liquidará entregando efectivo, bienes o servicios.`},
+    {term:`Pasivo Corriente vs. No Corriente`, def:`Corriente: se paga en 12 meses o menos (ej. cuentas por pagar). No corriente: se paga en más de 12 meses (ej. préstamos a largo plazo, bonos).`},
+    {term:`Pasivo Contingente`, def:`Obligación potencial que depende de un evento futuro incierto, como una demanda legal en proceso.`},
+    {term:`NIC 37`, def:`Regula las provisiones y pasivos contingentes. Una provisión se reconoce solo si hay obligación presente, es probable la salida de recursos y el monto se puede estimar.`},
+    {term:`Anticipos de Clientes`, def:`Pago recibido por un pedido no entregado aún; es un pasivo hasta que se cumple la obligación, momento en que se reclasifica como ingreso.`},
+    {term:`Dividendos por Pagar`, def:`Obligación con los accionistas una vez que la junta directiva declara el pago de dividendos, pero antes de desembolsarlo.`},
+    {term:`Bonos por Pagar`, def:`Deuda a largo plazo emitida por la empresa, que genera intereses periódicos hasta su vencimiento.`},
+    {term:`Pasivos Operativos vs. Financieros`, def:`Las cuentas por pagar a proveedores son pasivos operativos (generados por la actividad comercial); los préstamos bancarios y bonos son pasivos financieros, sujetos a intereses explícitos.`},
+    {term:`Proveedores vs. Acreedores Diversos`, def:`Proveedores: deudas por compras relacionadas con la producción o comercialización. Acreedores diversos: obligaciones no operativas, como préstamos de socios o anticipos de clientes.`},
+    {term:`NIIF 16 — Arrendamientos`, def:`Establece que los arrendamientos financieros (leasing) se reconocen como pasivo por el valor presente de los pagos futuros comprometidos.`},
+  ],
+  patrimonio: [
+    {term:`Patrimonio de los Accionistas`, def:`Derecho de los propietarios sobre los activos netos de la empresa, después de deducir sus obligaciones (pasivos).`},
+    {term:`Capital Social`, def:`Monto aportado por los socios o accionistas al constituir la sociedad; queda registrado en los estatutos.`},
+    {term:`Capital Contable`, def:`Capital Contable = Activos − Pasivos = Capital Social + Utilidades Retenidas + Reservas − Pérdidas Acumuladas ± Ajustes.`},
+    {term:`Reserva Legal (Ley 479-08)`, def:`En República Dominicana, las sociedades deben apartar al menos 5% de las utilidades de cada ejercicio, hasta alcanzar el 10% del capital social.`},
+    {term:`Acciones Comunes vs. Preferidas`, def:`Comunes: derecho a voto y dividendos variables. Preferidas: prioridad en dividendos, generalmente sin derecho a voto.`},
+    {term:`Acciones en Tesorería`, def:`Acciones propias que la empresa readquiere pero no cancela; mientras las mantenga, no dan derecho a voto ni a dividendos.`},
+    {term:`Capital Autorizado, Suscrito y Pagado`, def:`Autorizado: el máximo que la empresa puede emitir según estatutos. Suscrito: lo que los accionistas se comprometen a pagar. Pagado: lo que ya han aportado.`},
+    {term:`Aumento y Disminución de Capital`, def:`Aumenta por nuevos aportes o capitalización de utilidades (emitir acciones). Disminuye por pérdidas acumuladas o recompra de acciones.`},
+    {term:`Ley 479-08 (Sociedades Comerciales)`, def:`Ley dominicana que regula la constitución, estructura y manejo del capital de las sociedades comerciales, incluyendo la reserva legal obligatoria.`},
+    {term:`Tipos de Sociedades en RD`, def:`Sociedad Anónima (SA): capital en acciones, responsabilidad limitada. Sociedad de Responsabilidad Limitada (SRL): capital en cuotas sociales, no emite acciones.`},
+  ],
+};
+
+const QUESTIONS = {
+  fundamentos: [
+    {type:'mc', q:`¿Cuál es la ecuación contable fundamental?`, options:[`Activo = Pasivo + Patrimonio`,`Activo + Pasivo = Patrimonio`,`Patrimonio = Activo + Pasivo`,`Activo = Pasivo − Patrimonio`], correct:`Activo = Pasivo + Patrimonio`, explain:`Los recursos de la empresa (activos) siempre están financiados por deuda (pasivos) o por los dueños (patrimonio): Patrimonio = Activo − Pasivo, o reordenando, Activo = Pasivo + Patrimonio.`},
+    {type:'numeric', q:`Una empresa tiene Activos por RD$500,000 y Pasivos por RD$200,000. ¿Cuál es su Patrimonio (en RD$)?`, correct:300000, explain:`Patrimonio = Activo − Pasivo = 500,000 − 200,000 = RD$300,000.`},
+    {type:'tf', q:`El principio de devengado reconoce el ingreso cuando se cobra el efectivo, no cuando se presta el servicio.`, correct:false, explain:`Es al revés: el devengado reconoce el ingreso cuando se presta el servicio o se genera el derecho a cobrar, sin importar cuándo entra el efectivo.`},
+    {type:'mc', q:`Una empresa presta un servicio en diciembre pero el cliente paga en enero. Según el principio de devengado, ¿en qué mes se registra el ingreso?`, options:[`Diciembre`,`Enero`,`Se divide entre ambos meses`,`No se registra hasta cobrar`], correct:`Diciembre`, explain:`El ingreso se reconoce cuando se genera (se presta el servicio), no cuando se cobra.`},
+    {type:'mc', q:`Dentro del ciclo contable, ¿qué etapa sigue inmediatamente después de la Balanza de Comprobación?`, options:[`Ajustes contables`,`Cierre contable`,`Apertura del nuevo ciclo`,`Estados financieros`], correct:`Ajustes contables`, explain:`Después de comprobar que débitos y créditos cuadran, se hacen los ajustes (depreciación, devengos, provisiones) antes de generar la balanza ajustada y los estados financieros.`},
+    {type:'tf', q:`Las cuentas de ingresos y gastos se trasladan al nuevo período contable en el asiento de apertura.`, correct:false, explain:`Son cuentas temporales: se cierran contra el patrimonio al final del período. Solo las cuentas reales (activo, pasivo, patrimonio) se trasladan en la apertura.`},
+    {type:'numeric', q:`Si una empresa compra un equipo pagando RD$10,000 en efectivo, ¿por cuánto se registra el débito a la cuenta de Equipo?`, correct:10000, explain:`Se debita Equipo por RD$10,000 y se acredita Efectivo por el mismo monto: la partida doble siempre mantiene débitos = créditos.`},
+    {type:'mc', q:`Una empresa usó el método PEPS para su inventario el año pasado y este año cambia a Promedio Ponderado sin explicar el motivo en sus notas. ¿Qué principio contable está violando?`, options:[`Principio de Uniformidad`,`Principio de Prudencia`,`Principio de Devengado`,`Principio de Entidad`], correct:`Principio de Uniformidad`, explain:`El principio de uniformidad (o consistencia) exige aplicar los mismos métodos contables de un período a otro, salvo que se justifique y revele el cambio.`},
+    {type:'mc', q:`Ejercicio: Registra el efecto de esta transacción — una empresa paga RD$25,000 de una cuenta por pagar en efectivo. Además de disminuir el Efectivo, ¿qué otra cuenta se ve afectada y cómo?`, options:[`Cuentas por pagar disminuye RD$25,000`,`Cuentas por cobrar aumenta RD$25,000`,`Capital disminuye RD$25,000`,`Inventario aumenta RD$25,000`], correct:`Cuentas por pagar disminuye RD$25,000`, explain:`Al pagar una deuda, se debita (disminuye) Cuentas por pagar y se acredita (disminuye) Efectivo, ambas por RD$25,000: la partida doble se mantiene en equilibrio.`},
+    {type:'mc', q:`Ejercicio: Una empresa dominicana cierra su ejercicio fiscal en diciembre. Según el principio de período contable, ¿qué rango de meses deben cubrir sus estados financieros de ese año?`, options:[`Enero a diciembre`,`Solo diciembre`,`Julio a diciembre`,`No importa el rango, basta con el último trimestre`], correct:`Enero a diciembre`, explain:`El principio de período contable exige dividir la vida de la empresa en períodos definidos; si el ejercicio fiscal cierra en diciembre, los estados deben mostrar los resultados de todo el año, de enero a diciembre.`},
+  ],
+  efectivo: [
+    {type:'mc', q:`¿Cuál Norma Internacional de Contabilidad regula principalmente el efectivo y su presentación en el estado de flujos de efectivo?`, options:[`NIC 7`,`NIC 1`,`NIC 2`,`NIIF 9`], correct:`NIC 7`, explain:`La NIC 7 — Estado de Flujos de Efectivo es la norma principal: define qué es efectivo y equivalentes y clasifica los flujos en operativos, de inversión y de financiación.`},
+    {type:'numeric', q:`Una empresa posee USD$10,000 en una cuenta bancaria. Al cierre del ejercicio el tipo de cambio es RD$58.00 por USD. ¿Cuál es el valor en libros en RD$?`, correct:580000, explain:`10,000 × 58 = RD$580,000. El efectivo en moneda extranjera se convierte al tipo de cambio vigente al cierre.`},
+    {type:'tf', q:`El fondo de caja chica se utiliza para pagos grandes que requieren la emisión de un cheque.`, correct:false, explain:`Es al revés: la caja chica cubre pagos menores y urgentes que no justifican la emisión de un cheque o transferencia.`},
+    {type:'mc', q:`Al hacer la conciliación bancaria, un depósito de RD$50,000 realizado a fin de mes aún no aparece en el estado de cuenta del banco. ¿Cómo se identifica esta partida?`, options:[`Depósito en tránsito`,`Cheque pendiente de cobro`,`Cargo bancario no registrado`,`Nota de crédito`], correct:`Depósito en tránsito`, explain:`Un depósito registrado en libros pero que el banco aún no ha procesado es un depósito en tránsito; se concilia sin necesidad de ajustar los libros.`},
+    {type:'mc', q:`¿En qué categoría del estado de flujos de efectivo (NIC 7) se clasifica el pago de dividendos a los accionistas?`, options:[`Actividades de financiación`,`Actividades operativas`,`Actividades de inversión`,`No se clasifica en el estado de flujos`], correct:`Actividades de financiación`, explain:`Los pagos relacionados con el capital y la deuda de la empresa (como dividendos) se clasifican como actividades de financiación.`},
+    {type:'numeric', q:`Una empresa tiene RD$100,000 en caja, RD$250,000 en cuentas bancarias y RD$150,000 en certificados de depósito a corto plazo de alta liquidez. ¿Cuál es el total de efectivo y equivalentes a presentar en el balance?`, correct:500000, explain:`100,000 + 250,000 + 150,000 = RD$500,000. Todos son efectivo o equivalentes de alta liquidez.`},
+    {type:'mc', q:`¿Cuál de las siguientes es una práctica clave de control interno sobre el efectivo?`, options:[`Separar las funciones de quien autoriza, ejecuta y registra`,`Que una sola persona maneje caja, banco y contabilidad para agilizar procesos`,`Eliminar las conciliaciones bancarias para ahorrar tiempo`,`Guardar el efectivo sin registrar comprobantes`], correct:`Separar las funciones de quien autoriza, ejecuta y registra`, explain:`La separación de funciones reduce el riesgo de fraude y error, ya que ninguna persona controla todo el proceso.`},
+    {type:'tf', q:`El efectivo se presenta en el estado de situación financiera a su valor nominal (valor razonable).`, correct:true, explain:`El efectivo (moneda nacional y extranjera) se reconoce a su valor nominal, que en este caso coincide con su valor razonable.`},
+    {type:'mc', q:`Ejercicio: Al hacer la conciliación bancaria, una empresa descubre un cargo bancario (comisión) de RD$500 que nunca registró en sus libros. Para ajustar el saldo en libros, ¿el efectivo debe aumentar o disminuir?`, options:[`Disminuir`,`Aumentar`,`No cambia`,`Se traslada a cuentas por cobrar`], correct:`Disminuir`, explain:`Un cargo bancario no registrado (como una comisión) reduce el efectivo real disponible; al conciliar, se debe disminuir el saldo en libros para que coincida con la realidad.`},
+    {type:'numeric', q:`Ejercicio: Una empresa mantiene un fondo de caja chica de RD$45,000. Al revisar los comprobantes, ha gastado RD$32,000 en suministros menores. ¿Por cuánto debe reponerse el fondo para volver al monto fijo original?`, correct:32000, explain:`La reposición de caja chica siempre es por el monto exacto gastado (comprobado con los recibos), para que el fondo regrese a su monto fijo original de RD$45,000.`},
+  ],
+  cxc: [
+    {type:'numeric', q:`Una empresa decide crear una provisión para incobrables del 3% sobre RD$100,000 en cuentas por cobrar. ¿Cuál es el monto de la provisión?`, correct:3000, explain:`100,000 × 3% = RD$3,000.`},
+    {type:'numeric', q:`Método de estimación individual: Cliente A debe RD$40,000 con 80% de probabilidad de cobro (20% de riesgo), y Cliente B debe RD$25,000 con 50% de probabilidad de cobro (50% de riesgo). ¿Cuál es la provisión total combinada para A y B?`, correct:20500, explain:`Cliente A: 40,000 × 20% = 8,000. Cliente B: 25,000 × 50% = 12,500. Total: RD$20,500.`},
+    {type:'mc', q:`Según el Código Tributario dominicano (Ley 11-92, Art. 287-h), ¿cuál es el porcentaje máximo permitido para la reserva de cuentas incobrables sobre el saldo de cuentas por cobrar?`, options:[`4%`,`3%`,`10%`,`5%`], correct:`4%`, explain:`La reserva para cuentas incobrables no puede exceder el 4% del balance al cierre de las cuentas por cobrar a clientes, y debe estar debidamente documentada.`},
+    {type:'tf', q:`En una operación de factoring sin recurso, la empresa que vendió sus cuentas por cobrar sigue asumiendo el riesgo de que el cliente no pague.`, correct:false, explain:`En el factoring sin recurso, es el factor (la entidad financiera compradora) quien asume el riesgo de incobrabilidad, no la empresa vendedora.`},
+    {type:'numeric', q:`Un pagaré de RD$200,000 a 6 meses con una tasa de interés del 10% anual. ¿Cuánto interés genera en los 6 meses?`, correct:10000, explain:`200,000 × 10% × (6/12) = RD$10,000.`},
+    {type:'numeric', q:`Las cuentas por cobrar brutas de una empresa son RD$500,000 y la provisión para incobrables es RD$15,000. ¿Cuál es el monto neto de cuentas por cobrar a presentar en el balance?`, correct:485000, explain:`500,000 − 15,000 = RD$485,000. Las cuentas por cobrar se presentan netas de su provisión.`},
+    {type:'mc', q:`¿Qué norma internacional regula el reconocimiento, medición y deterioro (pérdida crediticia esperada) de las cuentas por cobrar como activos financieros?`, options:[`NIIF 9`,`NIC 2`,`NIC 16`,`NIIF 15`], correct:`NIIF 9`, explain:`La NIIF 9 regula el reconocimiento, medición y deterioro de activos financieros, incluyendo las cuentas por cobrar.`},
+    {type:'mc', q:`Una tienda vende electrodomésticos a crédito a un cliente frecuente. ¿Cómo se clasifica esta cuenta por cobrar?`, options:[`Comercial`,`No comercial`,`Contingente`,`Diferida`], correct:`Comercial`, explain:`Las cuentas por cobrar comerciales derivan de las operaciones ordinarias de venta de bienes o servicios a clientes.`},
+    {type:'numeric', q:`Ejercicio: Una empresa vende RD$500,000 en cuentas por cobrar a un banco mediante factoring, recibiendo un anticipo del 90%. Calcula cuánto efectivo recibe la empresa de inmediato.`, correct:450000, explain:`500,000 × 90% = RD$450,000 recibidos de inmediato; el 10% restante generalmente lo retiene el factor como margen o garantía.`},
+    {type:'mc', q:`Ejercicio: Clasifica esta partida — un préstamo que la empresa otorga a un empleado, a pagar en 18 meses. ¿Cómo se clasifica esta cuenta por cobrar?`, options:[`No comercial, a largo plazo`,`Comercial, a corto plazo`,`Comercial, a largo plazo`,`No comercial, a corto plazo`], correct:`No comercial, a largo plazo`, explain:`Un préstamo a un empleado no surge de una venta ordinaria (no es comercial), y como se cobra en más de 12 meses, es a largo plazo.`},
+  ],
+  inventario: [
+    {type:'numeric', q:`Una empresa tiene disponibles 100 unidades a RD$10 c/u y 200 unidades a RD$12 c/u. Usando Promedio Ponderado, ¿cuál es el costo promedio por unidad (redondeado a 2 decimales)?`, correct:11.33, tolerance:0.1, explain:`Costo total = (100×10)+(200×12) = 1,000+2,400 = 3,400. Unidades totales = 300. Promedio = 3,400 ÷ 300 = RD$11.33 por unidad.`},
+    {type:'mc', q:`¿Qué método de valoración de inventario asume que las primeras unidades compradas son las primeras en venderse?`, options:[`PEPS (FIFO)`,`UEPS (LIFO)`,`Promedio Ponderado`,`Costo Estándar`], correct:`PEPS (FIFO)`, explain:`PEPS significa "Primero en Entrar, Primero en Salir": los inventarios más antiguos se venden primero.`},
+    {type:'tf', q:`La DGII permite el uso del método UEPS (LIFO) para efectos fiscales en República Dominicana.`, correct:false, explain:`La DGII solo permite PEPS o Promedio Ponderado para efectos fiscales; UEPS no es admitido.`},
+    {type:'mc', q:`Un supermercado actualiza sus existencias automáticamente cada vez que un lector de código de barras registra una venta. ¿Qué sistema de inventario está usando?`, options:[`Perpetuo`,`Periódico`,`Estándar`,`Kardex manual`], correct:`Perpetuo`, explain:`El sistema perpetuo actualiza el inventario en tiempo real con cada movimiento, a diferencia del periódico que solo se actualiza al cierre.`},
+    {type:'numeric', q:`Con el ejemplo anterior (300 unidades disponibles a un costo total de RD$3,400, promedio RD$11.33 por unidad), si se venden 120 unidades, ¿cuál es el costo aproximado (en RD$) de esas unidades vendidas?`, correct:1360, tolerance:20, explain:`120 × 11.33 ≈ RD$1,360.`},
+    {type:'mc', q:`¿Qué Norma Internacional de Contabilidad regula el tratamiento contable de los inventarios (valoración, métodos y deterioro)?`, options:[`NIC 2`,`NIC 7`,`NIC 38`,`NIIF 9`], correct:`NIC 2`, explain:`La NIC 2 — Inventarios establece cómo valorar los inventarios, los métodos permitidos y el reconocimiento de deterioro.`},
+    {type:'tf', q:`Bajo NIC 2, un inventario debe reconocer una pérdida por deterioro cuando su valor neto realizable es menor que su costo.`, correct:true, explain:`Correcto: cuando el valor neto realizable cae por debajo del costo registrado, se debe reconocer el deterioro.`},
+    {type:'mc', q:`Productos tecnológicos que llevan más de dos años almacenados sin venderse y han perdido valor comercial se consideran:`, options:[`Inventario obsoleto`,`Inventario en tránsito`,`Inventario dañado`,`Inventario estándar`], correct:`Inventario obsoleto`, explain:`El inventario obsoleto ha perdido valor comercial por el paso del tiempo o los cambios tecnológicos, y requiere reconocer su deterioro.`},
+    {type:'mc', q:`Ejercicio: Una empresa usa el método PEPS para valorar sus inventarios de productos perecederos. ¿Qué debe hacer respecto a este método en sus notas a los estados financieros?`, options:[`Revelar la política contable aplicada`,`No es necesario mencionarlo`,`Solo informarlo si lo audita la DGII`,`Cambiarlo cada año para mayor transparencia`], correct:`Revelar la política contable aplicada`, explain:`Las normas contables exigen revelar en las notas qué método de valoración de inventario se usa, para que los usuarios entiendan cómo se midieron las cifras.`},
+    {type:'numeric', q:`Ejercicio: El costo estándar de un par de zapatos es RD$500, pero el costo real terminó siendo RD$530 por un aumento en los materiales. ¿Cuál es la variación (diferencia) entre el costo real y el estándar?`, correct:30, explain:`530 − 500 = RD$30 de variación. Esta diferencia entre lo presupuestado (estándar) y lo realmente incurrido (real) es clave para el control de costos.`},
+  ],
+  ppe: [
+    {type:'numeric', q:`Una maquinaria tiene un costo de RD$1,000,000, una vida útil de 10 años y un valor residual estimado de RD$100,000. Usando línea recta, ¿cuál es la depreciación anual?`, correct:90000, explain:`(1,000,000 − 100,000) ÷ 10 = RD$90,000 por año.`},
+    {type:'numeric', q:`Un equipo se adquiere en RD$800,000 y la empresa paga además RD$50,000 por instalación y transporte para dejarlo listo para su uso. ¿Cuál es el costo total que debe capitalizarse?`, correct:850000, explain:`El costo capitalizable incluye el precio de compra más todos los costos necesarios para dejar el activo listo para su uso: 800,000 + 50,000 = RD$850,000.`},
+    {type:'numeric', q:`Una máquina tiene un valor en libros de RD$200,000 y se vende por RD$250,000. ¿Cuál es la ganancia en la disposición (en RD$)?`, correct:50000, explain:`Ganancia = Valor de realización − Valor en libros = 250,000 − 200,000 = RD$50,000.`},
+    {type:'mc', q:`¿Cuál método de depreciación asigna un gasto mayor en los primeros años de vida del activo?`, options:[`Número de dígitos (suma de dígitos)`,`Línea recta`,`Unidades producidas`,`Horas trabajadas`], correct:`Número de dígitos (suma de dígitos)`, explain:`El método de número de dígitos es un método acelerado: asigna mayor depreciación en los primeros años y menor en los últimos.`},
+    {type:'tf', q:`El valor en libros de un activo se calcula sumando el costo más la depreciación acumulada.`, correct:false, explain:`Es al revés: Valor en libros = Costo − Depreciación acumulada.`},
+    {type:'mc', q:`Una empresa de transporte quiere que la depreciación de sus vehículos refleje el desgaste según los kilómetros recorridos. ¿Qué método es más apropiado?`, options:[`Unidades producidas (o de uso)`,`Línea recta`,`Número de dígitos`,`Ninguno, los vehículos no se deprecian`], correct:`Unidades producidas (o de uso)`, explain:`El método de unidades producidas asigna la depreciación en función del uso real (kilómetros, horas, unidades), ideal cuando el desgaste depende de la actividad y no solo del tiempo.`},
+    {type:'numeric', q:`Un activo genera un gasto por depreciación de RD$180,000 cada año. Si han transcurrido 3 años completos sin cambios, ¿cuál es la depreciación acumulada al final del tercer año?`, correct:540000, explain:`180,000 × 3 = RD$540,000.`},
+    {type:'mc', q:`Según la Ley 11-92 (Art. 287-288), ¿qué requisito es indispensable para poder deducir fiscalmente el gasto por depreciación?`, options:[`Que esté debidamente soportada y dentro de los límites por categoría`,`Que el activo esté totalmente pagado en efectivo`,`Que el activo tenga más de 20 años de vida útil`,`Que la empresa no tenga utilidades ese año`], correct:`Que esté debidamente soportada y dentro de los límites por categoría`, explain:`La ley permite deducir la depreciación como gasto solo si está debidamente soportada, aplicando el porcentaje permitido para cada categoría de bien.`},
+    {type:'numeric', q:`Ejercicio: Una empresa industrial proyecta su flujo de caja con base en la depreciación programada de su maquinaria principal. Si la depreciación anual es de RD$120,000 y ya han transcurrido 4 años completos, ¿cuál es la depreciación acumulada?`, correct:480000, explain:`120,000 × 4 = RD$480,000 de depreciación acumulada.`},
+    {type:'mc', q:`Ejercicio: Clasifica esta situación — una empresa de equipos de cómputo, cuyo ciclo de innovación es de 2 a 3 años, decide depreciar sus equipos más rápido de lo normal. ¿Qué tipo de depreciación está aplicando?`, options:[`Depreciación acelerada`,`Depreciación en línea recta`,`Depreciación por unidades producidas`,`No se puede depreciar más rápido de lo normal`], correct:`Depreciación acelerada`, explain:`Cuando el riesgo de obsolescencia tecnológica es alto, se justifica una depreciación acelerada que reconoce mayor gasto en los primeros años de uso.`},
+  ],
+  intangibles: [
+    {type:'numeric', q:`Una empresa adquiere una patente por RD$1,000,000 con una vida útil estimada de 5 años. ¿Cuál es la amortización anual (línea recta)?`, correct:200000, explain:`1,000,000 ÷ 5 = RD$200,000 por año.`},
+    {type:'numeric', q:`Una marca registrada se adquiere por RD$600,000 con una vida útil de 10 años. ¿Cuál es la amortización anual?`, correct:60000, explain:`600,000 ÷ 10 = RD$60,000 por año.`},
+    {type:'mc', q:`¿Qué tipo de activo intangible otorga derechos exclusivos para explotar una invención, generalmente por 20 años?`, options:[`Patente`,`Marca registrada`,`Nombre comercial`,`Licencia`], correct:`Patente`, explain:`Una patente es un derecho exclusivo otorgado por el Estado para explotar una invención técnica durante un período determinado.`},
+    {type:'tf', q:`La reputación (goodwill) generada internamente por el buen desempeño de una empresa se reconoce siempre como activo intangible en su balance.`, correct:false, explain:`El goodwill solo se reconoce contablemente cuando surge de la adquisición de otra empresa, pagando por encima del valor razonable de sus activos netos. La reputación "interna" no se registra.`},
+    {type:'mc', q:`Según la NIC 38, ¿cuáles son los tres requisitos para reconocer un activo intangible?`, options:[`Ser identificable, estar controlado por la empresa y generar beneficios económicos futuros`,`Tener forma física, ser vendible y tener más de 5 años`,`Estar patentado, ser exclusivo y no depreciarse nunca`,`Ser adquirido en efectivo, tener factura y estar en el extranjero`], correct:`Ser identificable, estar controlado por la empresa y generar beneficios económicos futuros`, explain:`Estos son los tres criterios de reconocimiento que exige la NIC 38 para registrar un activo intangible.`},
+    {type:'numeric', q:`Una empresa adquiere una franquicia por RD$1,000,000 con una duración de 5 años. ¿Cuánto puede deducir fiscalmente cada año como gasto de amortización según la Ley 11-92?`, correct:200000, explain:`1,000,000 ÷ 5 = RD$200,000 anuales, siempre que esté debidamente documentado.`},
+    {type:'mc', q:`Si no puede determinarse la vida útil de un activo intangible, ¿en cuántos años como mínimo debe amortizarse según el Reglamento 139-98?`, options:[`10 años`,`5 años`,`20 años`,`3 años`], correct:`10 años`, explain:`El Reglamento 139-98 establece que si no puede determinarse la vida útil, el intangible se amortiza en un período no menor de 10 años.`},
+    {type:'tf', q:`El goodwill se calcula como la diferencia entre el precio pagado por una empresa adquirida y el valor razonable de sus activos netos.`, correct:true, explain:`Correcto: si el precio pagado supera el valor razonable de los activos netos adquiridos, esa diferencia se reconoce como goodwill.`},
+    {type:'numeric', q:`Ejercicio: Una empresa adquiere una licencia de software por RD$500,000 más RD$50,000 de gastos de instalación. Calcula el costo total que debe capitalizarse como activo intangible.`, correct:550000, explain:`El costo del intangible incluye el precio de adquisición más los gastos necesarios para su puesta en funcionamiento: 500,000 + 50,000 = RD$550,000.`},
+    {type:'mc', q:`Ejercicio: Clasifica este caso — el nombre "Google" identifica comercialmente a la empresa Alphabet Inc., sin que necesariamente esté registrado como marca. ¿Qué tipo de activo intangible es?`, options:[`Nombre comercial`,`Patente`,`Goodwill`,`Licencia`], correct:`Nombre comercial`, explain:`El nombre comercial es la denominación bajo la cual una empresa opera en el mercado para fines de identificación legal y comercial, distinta de una marca registrada formalmente.`},
+  ],
+  otrosactivos: [
+    {type:'numeric', q:`Una empresa paga RD$12,000 por una póliza de seguro anual el 1 de enero. Según el principio de devengo, ¿cuánto debe reconocer como gasto de seguro cada mes?`, correct:1000, explain:`12,000 ÷ 12 meses = RD$1,000 mensuales.`},
+    {type:'numeric', q:`Una empresa incurre en RD$60,000 de gastos de reorganización, que se amortizarán en 5 años por línea recta. ¿Cuál es la amortización anual?`, correct:12000, explain:`60,000 ÷ 5 = RD$12,000 por año.`},
+    {type:'mc', q:`Un depósito en garantía por el alquiler de una oficina que se recuperará en 6 meses se clasifica como:`, options:[`Activo corriente`,`Activo no corriente`,`Pasivo corriente`,`Gasto del período`], correct:`Activo corriente`, explain:`Al esperarse su recuperación dentro de los próximos 12 meses, se clasifica como activo corriente.`},
+    {type:'tf', q:`Los gastos pagados por anticipado se registran directamente como gasto en el momento en que se pagan.`, correct:false, explain:`Se registran primero como activo y se van reconociendo como gasto (amortizando) a medida que se consumen o transcurre el tiempo cubierto.`},
+    {type:'mc', q:`¿Qué Norma Internacional de Contabilidad exige clasificar los activos entre corrientes y no corrientes en el estado de situación financiera?`, options:[`NIC 1`,`NIC 2`,`NIC 37`,`NIIF 9`], correct:`NIC 1`, explain:`La NIC 1 — Presentación de Estados Financieros establece la clasificación entre partidas corrientes y no corrientes.`},
+    {type:'numeric', q:`Siguiendo el seguro de RD$12,000 pagado por anticipado (RD$1,000 de gasto por mes), después de 3 meses, ¿cuál es el saldo que queda en la cuenta de activo "Seguro pagado por anticipado"?`, correct:9000, explain:`12,000 − (1,000 × 3) = RD$9,000 restantes como activo.`},
+    {type:'mc', q:`Un estudio de factibilidad cuyos beneficios se espera recibir durante varios años futuros se clasifica como:`, options:[`Activo diferido (no corriente)`,`Gasto del período`,`Pasivo no corriente`,`Activo corriente`], correct:`Activo diferido (no corriente)`, explain:`Al generar beneficios en varios períodos futuros, se capitaliza como activo diferido no corriente y se amortiza.`},
+    {type:'tf', q:`El principio de devengo establece que los gastos deben registrarse cuando se pagan en efectivo, sin importar cuándo ocurren realmente.`, correct:false, explain:`Es al revés: los gastos se registran cuando ocurren (se consumen), sin importar cuándo se paga el efectivo.`},
+    {type:'numeric', q:`Ejercicio: Una empresa mantiene RD$50,000 en efectivo, RD$30,000 en cuentas por cobrar, RD$5,000 en gastos pagados por anticipado y RD$8,000 en otros activos corrientes. Calcula el total de activos corrientes.`, correct:93000, explain:`50,000 + 30,000 + 5,000 + 8,000 = RD$93,000 de activos corrientes.`},
+    {type:'mc', q:`Ejercicio: Clasifica esta partida — un crédito fiscal recuperable a favor de la empresa que se compensará dentro de los próximos 3 meses. ¿Es un activo corriente o no corriente?`, options:[`Activo corriente`,`Activo no corriente`,`No es un activo, es un pasivo`,`Se registra como gasto`], correct:`Activo corriente`, explain:`Al recuperarse dentro de los 12 meses siguientes al cierre (en este caso, 3 meses), se clasifica como activo corriente.`},
+  ],
+  pasivos: [
+    {type:'mc', q:`Un préstamo bancario que debe pagarse en su totalidad dentro de los próximos 6 meses se clasifica como:`, options:[`Pasivo corriente`,`Pasivo no corriente`,`Pasivo contingente`,`Patrimonio`], correct:`Pasivo corriente`, explain:`Los pasivos con vencimiento igual o menor a 12 meses se clasifican como corrientes.`},
+    {type:'mc', q:`Un préstamo hipotecario a pagar en 5 años se clasifica como:`, options:[`Pasivo no corriente (largo plazo)`,`Pasivo corriente`,`Activo no corriente`,`Pasivo contingente`], correct:`Pasivo no corriente (largo plazo)`, explain:`Los pasivos con vencimiento mayor a 12 meses se clasifican como no corrientes o de largo plazo.`},
+    {type:'tf', q:`Según la NIC 37, una provisión se puede reconocer aunque no exista una obligación presente, siempre que exista la posibilidad de una salida futura de recursos.`, correct:false, explain:`Se requieren los tres criterios: obligación presente, salida probable de recursos y que el monto se pueda estimar razonablemente. Sin obligación presente no se reconoce la provisión.`},
+    {type:'numeric', q:`Una empresa emite bonos por RD$1,000,000 a 5 años con una tasa de interés del 10% anual. ¿Cuánto interés debe pagar cada año?`, correct:100000, explain:`1,000,000 × 10% = RD$100,000 anuales.`},
+    {type:'mc', q:`Un cliente paga por adelantado un pedido que la empresa aún no ha entregado. ¿Cómo debe registrar la empresa este cobro?`, options:[`Como un pasivo (anticipo de clientes)`,`Como un ingreso inmediato`,`Como una cuenta por cobrar`,`Como patrimonio`], correct:`Como un pasivo (anticipo de clientes)`, explain:`Mientras no se cumpla la obligación de entregar el bien o servicio, el cobro anticipado es un pasivo (ingreso no ganado).`},
+    {type:'tf', q:`Cuando la empresa finalmente entrega el pedido que había sido pagado por adelantado, el anticipo del cliente se reclasifica como ingreso.`, correct:true, explain:`Correcto: al cumplirse la obligación, el pasivo se reclasifica y se reconoce como ingreso.`},
+    {type:'numeric', q:`Una empresa tiene un préstamo de RD$300,000 a pagar en 3 cuotas anuales iguales de capital. ¿Cuál es la porción corriente (a pagar en el próximo año)?`, correct:100000, explain:`300,000 ÷ 3 = RD$100,000, que se reclasifica como pasivo corriente por ser la porción que vence dentro de los próximos 12 meses.`},
+    {type:'mc', q:`¿Qué Norma Internacional de Contabilidad establece cómo deben clasificarse los pasivos entre corrientes y no corrientes en el balance general?`, options:[`NIC 1`,`NIC 37`,`NIC 2`,`NIIF 16`], correct:`NIC 1`, explain:`La NIC 1 — Presentación de Estados Financieros establece esta clasificación y exige revelar las condiciones de vencimiento.`},
+    {type:'mc', q:`Ejercicio: Una empresa firma un leasing (arrendamiento financiero) por RD$500,000 a 4 años. ¿Cómo se clasifica esta obligación?`, options:[`Pasivo no corriente (largo plazo)`,`Pasivo corriente`,`Activo no corriente`,`Patrimonio`], correct:`Pasivo no corriente (largo plazo)`, explain:`Al vencer en 4 años (más de 12 meses), el arrendamiento financiero se clasifica como pasivo no corriente, reconocido según la NIIF 16 al valor presente de los pagos futuros.`},
+    {type:'mc', q:`Ejercicio: Una empresa recibe una factura de electricidad por RD$10,000 en el mes de diciembre, pero el pago se efectúa en enero. Según el principio de devengo, ¿en qué mes debe registrarse el gasto y el pasivo?`, options:[`Diciembre`,`Enero`,`Se divide entre ambos meses`,`No se registra hasta pagarla`], correct:`Diciembre`, explain:`El principio de devengo exige reconocer la obligación en el momento en que se recibe el bien o servicio (diciembre), independientemente de cuándo se pague en efectivo (enero).`},
+  ],
+  patrimonio: [
+    {type:'numeric', q:`Una empresa tiene Activos por RD$500,000 y Pasivos por RD$200,000. ¿Cuál es su Capital Contable (Patrimonio)?`, correct:300000, explain:`Capital Contable = Activos − Pasivos = 500,000 − 200,000 = RD$300,000.`},
+    {type:'numeric', q:`Una empresa tiene Capital Social de RD$200,000, Utilidades Retenidas de RD$80,000 y Reservas de RD$20,000 (sin pérdidas acumuladas). ¿Cuál es su Capital Contable total?`, correct:300000, explain:`200,000 + 80,000 + 20,000 = RD$300,000.`},
+    {type:'mc', q:`¿Qué tipo de acción da prioridad en el cobro de dividendos pero generalmente no otorga derecho a voto?`, options:[`Acción preferida`,`Acción común`,`Acción en tesorería`,`Cuota social`], correct:`Acción preferida`, explain:`Las acciones preferidas tienen prioridad en dividendos, pero por lo general no otorgan derecho a voto.`},
+    {type:'tf', q:`Las acciones en tesorería (readquiridas por la empresa) otorgan derecho a voto y a recibir dividendos mientras la empresa las mantenga en su poder.`, correct:false, explain:`Mientras estén en tesorería no dan derecho a voto ni a dividendos; solo pueden reemitirse o cancelarse.`},
+    {type:'mc', q:`Según la Ley 479-08 de República Dominicana, ¿cuál es el porcentaje mínimo de reserva legal que debe apartarse sobre las utilidades de cada ejercicio (hasta alcanzar el 10% del capital social)?`, options:[`5%`,`10%`,`3%`,`15%`], correct:`5%`, explain:`La ley exige apartar al menos un 5% de las ganancias líquidas de cada ejercicio como reserva legal, hasta llegar al 10% del capital social.`},
+    {type:'numeric', q:`Una sociedad anónima emite 1,000 acciones nuevas a RD$100 cada una. ¿Cuánto capital nuevo recauda en total?`, correct:100000, explain:`1,000 × 100 = RD$100,000.`},
+    {type:'mc', q:`¿Cuál es la principal diferencia entre las cuotas sociales de una SRL y las acciones de una SA?`, options:[`Las cuotas sociales no son negociables como las acciones`,`Las cuotas sociales dan más votos que las acciones`,`Las acciones no tienen valor nominal`,`Las SRL no pueden tener patrimonio`], correct:`Las cuotas sociales no son negociables como las acciones`, explain:`Las cuotas sociales representan partes iguales del capital de una SRL y no se negocian libremente como las acciones de una SA.`},
+    {type:'tf', q:`El capital contable de una empresa puede reducirse por pérdidas acumuladas.`, correct:true, explain:`Correcto: las pérdidas acumuladas reducen el capital contable, tal como las utilidades retenidas lo aumentan.`},
+    {type:'numeric', q:`Ejercicio: Una SA recompra 500 acciones propias a RD$50 cada una para evitar una toma hostil. Calcula el monto total pagado en la recompra.`, correct:25000, explain:`500 × 50 = RD$25,000 pagados por las acciones en tesorería.`},
+    {type:'mc', q:`Ejercicio: Una empresa reduce su capital porque tiene pérdidas acumuladas que necesita absorber. ¿Qué le sucede al Capital Contable?`, options:[`Disminuye`,`Aumenta`,`No cambia`,`Se convierte en pasivo`], correct:`Disminuye`, explain:`Las pérdidas acumuladas reducen directamente el capital contable, ya que forman parte de la fórmula: Capital Contable = Capital Social + Utilidades Retenidas + Reservas − Pérdidas Acumuladas.`},
+  ],
+};
+
+const ALL_CARDS = TOPICS.flatMap(t => FLASHCARDS[t.id].map(c => ({...c, topicId:t.id})));
+const ALL_QUESTIONS = TOPICS.flatMap(t => QUESTIONS[t.id].map(q => ({...q, topicId:t.id})));
+
+/* ============== STATE ============== */
+let state = {
+  view:'loading',
+  mode:null,
+  topicId:null,
+  cards:[], cardIndex:0, flipped:false,
+  examQuestions:[], examIndex:0,
+  examAnswers:[],
+  answered:false, userAnswer:null, isCorrect:null,
+  scores:{},
+};
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* ============== STORAGE ============== */
+async function loadScores(){
+  try{
+    const res = await window.storage.get('study_results', false);
+    state.scores = (res && res.value) ? JSON.parse(res.value) : {};
+  }catch(e){
+    state.scores = {};
+  }
+}
+async function saveAttempt(topicId, correct, total){
+  if(!state.scores[topicId]) state.scores[topicId] = {attempts:[], best:{correct:0,total:1}};
+  state.scores[topicId].attempts.push({correct,total,date:new Date().toISOString()});
+  if(state.scores[topicId].attempts.length>10) state.scores[topicId].attempts.shift();
+  const bestPct = state.scores[topicId].best.total ? state.scores[topicId].best.correct/state.scores[topicId].best.total : 0;
+  const newPct = correct/total;
+  if(newPct>=bestPct) state.scores[topicId].best = {correct,total};
+  try{
+    await window.storage.set('study_results', JSON.stringify(state.scores), false);
+  }catch(e){ console.error('No se pudo guardar el progreso', e); }
+}
+async function resetProgress(){
+  if(!confirm('¿Borrar todo tu progreso guardado (mejores puntajes)? Esta acción no se puede deshacer.')) return;
+  state.scores = {};
+  try{ await window.storage.set('study_results', JSON.stringify({}), false); }catch(e){}
+  render();
+}
+
+/* ============== NAVIGATION ============== */
+function goHome(){ state = {...state, view:'home', mode:null, topicId:null}; render(); }
+function chooseMode(mode){ state.mode = mode; state.view = 'topics'; render(); }
+function backToTopics(){ state.view = 'topics'; render(); }
+
+function chooseTopic(topicId){
+  state.topicId = topicId;
+  if(state.mode==='study') startStudy(topicId); else startExam(topicId);
+}
+
+function startStudy(topicId){
+  const pool = topicId==='general' ? ALL_CARDS : FLASHCARDS[topicId].map(c=>({...c, topicId}));
+  state.cards = shuffle(pool);
+  state.cardIndex = 0;
+  state.flipped = false;
+  state.view = 'study';
+  render();
+}
+function shuffleStudyDeck(){
+  state.cards = shuffle(state.cards);
+  state.cardIndex = 0;
+  state.flipped = false;
+  render();
+}
+function flipCard(){ state.flipped = !state.flipped; render(); }
+function nextCard(){ if(state.cardIndex < state.cards.length-1){ state.cardIndex++; state.flipped=false; render(); } }
+function prevCard(){ if(state.cardIndex>0){ state.cardIndex--; state.flipped=false; render(); } }
+
+function startExam(topicId){
+  const pool = topicId==='general' ? shuffle(ALL_QUESTIONS).slice(0,25) : shuffle(QUESTIONS[topicId].map(q=>({...q, topicId})));
+  state.examQuestions = pool;
+  state.examIndex = 0;
+  state.examAnswers = [];
+  state.answered = false; state.userAnswer=null; state.isCorrect=null;
+  state.view = 'exam';
+  render();
+}
+
+function currentQuestion(){ return state.examQuestions[state.examIndex]; }
+
+function answerMC(opt){
+  if(state.answered) return;
+  const q = currentQuestion();
+  state.userAnswer = opt;
+  state.isCorrect = (opt === q.correct);
+  state.answered = true;
+  state.examAnswers.push({q, userAnswer:opt, isCorrect:state.isCorrect});
+  render();
+}
+function answerTF(val){
+  if(state.answered) return;
+  const q = currentQuestion();
+  state.userAnswer = val;
+  state.isCorrect = (val === q.correct);
+  state.answered = true;
+  state.examAnswers.push({q, userAnswer:val, isCorrect:state.isCorrect});
+  render();
+}
+function checkNumericAnswer(){
+  if(state.answered) return;
+  const q = currentQuestion();
+  const input = document.getElementById('numeric-input');
+  const raw = input ? input.value : '';
+  const cleaned = parseFloat(String(raw).replace(/[^0-9.\-]/g,''));
+  const tol = (q.tolerance!==undefined) ? q.tolerance : 1;
+  const ok = !isNaN(cleaned) && Math.abs(cleaned - q.correct) <= tol;
+  state.userAnswer = isNaN(cleaned) ? '(sin respuesta)' : cleaned;
+  state.isCorrect = ok;
+  state.answered = true;
+  state.examAnswers.push({q, userAnswer:state.userAnswer, isCorrect:ok});
+  render();
+}
+function nextQuestion(){
+  if(state.examIndex < state.examQuestions.length-1){
+    state.examIndex++;
+    state.answered=false; state.userAnswer=null; state.isCorrect=null;
+    render();
+  }else{
+    const correct = state.examAnswers.filter(a=>a.isCorrect).length;
+    const total = state.examAnswers.length;
+    saveAttempt(state.topicId, correct, total).then(render);
+    state.view = 'results';
+    render();
+  }
+}
+function retryTopic(){ startExam(state.topicId); }
+
+/* ============== RENDER ============== */
+function fmtMoney(n){ return 'RD$' + Number(n).toLocaleString('es-DO'); }
+
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = viewHTML();
+}
+
+function viewHTML(){
+  switch(state.view){
+    case 'loading': return `<div class="empty-note">Cargando tu cuaderno de estudio…</div>`;
+    case 'home': return homeView();
+    case 'topics': return topicsView();
+    case 'study': return studyView();
+    case 'exam': return examView();
+    case 'results': return resultsView();
+    default: return homeView();
+  }
+}
+
+function homeView(){
+  return `
+    <div class="home-hero">
+      <div class="eyebrow">Contabilidad Financiera II</div>
+      <h1>Cuaderno de Estudio</h1>
+      <p class="subtitle">Repasa los temas del curso o ponte a prueba con un mini examen</p>
+      <div class="ledger-rule"></div>
+      <div class="mode-tabs">
+        <button class="mode-tab" onclick="chooseMode('study')">
+          <span class="icon">📖</span>
+          ESTUDIAR
+          <span class="desc">Tarjetas de repaso por tema</span>
+        </button>
+        <button class="mode-tab" onclick="chooseMode('exam')">
+          <span class="icon">✏️</span>
+          TOMAR EXAMEN
+          <span class="desc">Mini examen con corrección al instante</span>
+        </button>
+      </div>
+    </div>
+    <div class="home-footer">
+      <button class="link-btn" onclick="resetProgress()">Borrar mi progreso guardado</button>
+    </div>
+  `;
+}
+
+function topicsView(){
+  const modeLabel = state.mode==='study' ? 'Estudiar' : 'Tomar examen';
+  const rows = TOPICS.map(t=>{
+    const flashCount = FLASHCARDS[t.id].length;
+    const qCount = QUESTIONS[t.id].length;
+    const sc = state.scores[t.id];
+    const badge = (state.mode==='exam' && sc && sc.best) ? `<span class="badge">Mejor: ${sc.best.correct}/${sc.best.total}</span>` : '';
+    const countLabel = state.mode==='study' ? `${flashCount} tarjetas` : `${qCount} preguntas`;
+    return `
+      <button class="topic-row" onclick="chooseTopic('${t.id}')">
+        <span class="icon">${t.icon}</span>
+        <span class="meta">
+          <span class="name">${t.name}</span>
+          <span class="count">${countLabel}</span>
+        </span>
+        ${badge}
+      </button>
+    `;
+  }).join('');
+
+  const generalCount = state.mode==='study' ? ALL_CARDS.length : Math.min(25, ALL_QUESTIONS.length);
+  const generalLabel = state.mode==='study' ? `${generalCount} tarjetas de todos los temas` : `${generalCount} preguntas mezcladas de todos los temas`;
+
+  return `
+    <div class="topbar">
+      <span class="crumbs">Inicio › ${modeLabel}</span>
+      <button class="link-btn" onclick="goHome()">🏠 Inicio</button>
+    </div>
+    <div class="section-title">¿Qué quieres repasar?</div>
+    <div class="section-hint">Elige un tema específico o un repaso general mezclando todos los temas.</div>
+    <button class="topic-row general" onclick="chooseTopic('general')">
+      <span class="icon">🗒️</span>
+      <span class="meta">
+        <span class="name">General (todos los temas)</span>
+        <span class="count">${generalLabel}</span>
+      </span>
+    </button>
+    <div class="topic-list">${rows}</div>
+  `;
+}
+
+function studyView(){
+  const topicLabel = state.topicId==='general' ? 'Repaso General' : topicName(state.topicId);
+  if(state.cards.length===0){
+    return `<div class="empty-note">No hay tarjetas disponibles para este tema.</div>`;
+  }
+  const card = state.cards[state.cardIndex];
+  const tag = state.topicId==='general' ? `${topicIcon(card.topicId)} ${topicName(card.topicId)}` : '';
+  return `
+    <div class="topbar">
+      <span class="crumbs">Inicio › Estudiar › ${topicLabel}</span>
+      <div>
+        <button class="link-btn" onclick="backToTopics()">← Temas</button>
+        <button class="link-btn" onclick="goHome()">🏠 Inicio</button>
+      </div>
+    </div>
+    <div class="study-topbar">Tarjeta ${state.cardIndex+1} de ${state.cards.length}
+      &nbsp;·&nbsp; <button class="link-btn" onclick="shuffleStudyDeck()">🔀 Mezclar</button>
+    </div>
+    <div class="flashcard-wrap">
+      <div class="flashcard ${state.flipped?'flipped':''}" onclick="flipCard()">
+        <div class="flash-face front">
+          ${tag ? `<span class="tag">${tag}</span>` : ''}
+          <span class="label">Concepto</span>
+          <h2>${card.term}</h2>
+        </div>
+        <div class="flash-face back">
+          ${tag ? `<span class="tag">${tag}</span>` : ''}
+          <span class="label">Explicación</span>
+          <p>${card.def}</p>
+        </div>
+      </div>
+    </div>
+    <div class="flash-hint">Toca la tarjeta para ver la explicación</div>
+    <div class="study-nav">
+      <button class="nav-btn" onclick="prevCard()" ${state.cardIndex===0?'disabled':''}>‹</button>
+      <span class="progress-dots">${state.cardIndex+1} / ${state.cards.length}</span>
+      <button class="nav-btn" onclick="nextCard()" ${state.cardIndex===state.cards.length-1?'disabled':''}>›</button>
+    </div>
+  `;
+}
+
+function examView(){
+  const topicLabel = state.topicId==='general' ? 'Repaso General' : topicName(state.topicId);
+  const q = currentQuestion();
+  const total = state.examQuestions.length;
+  const pct = Math.round(((state.examIndex)/total)*100);
+  const tag = state.topicId==='general' ? `${topicIcon(q.topicId)} ${topicName(q.topicId)}` : '';
+
+  let bodyHTML = '';
+  if(q.type==='mc'){
+    bodyHTML = `<div class="option-list">` + q.options.map((opt,i)=>{
+      const letter = String.fromCharCode(97+i);
+      let cls='option-row';
+      if(state.answered){
+        if(opt===q.correct) cls+=' correct';
+        else if(opt===state.userAnswer) cls+=' incorrect';
+      }
+      return `<button class="${cls}" ${state.answered?'disabled':''} onclick="answerMC(\`${opt.replace(/`/g,'')}\`)"><span class="letter">${letter})</span> ${opt}</button>`;
+    }).join('') + `</div>`;
+  } else if(q.type==='tf'){
+    let trueCls='tf-btn true-btn', falseCls='tf-btn false-btn';
+    if(state.answered){
+      if(q.correct===true) trueCls+=' correct'; else if(state.userAnswer===true) trueCls+=' incorrect';
+      if(q.correct===false) falseCls+=' correct'; else if(state.userAnswer===false) falseCls+=' incorrect';
+    }
+    bodyHTML = `<div class="tf-buttons">
+      <button class="${trueCls}" ${state.answered?'disabled':''} onclick="answerTF(true)">VERDADERO</button>
+      <button class="${falseCls}" ${state.answered?'disabled':''} onclick="answerTF(false)">FALSO</button>
+    </div>`;
+  } else if(q.type==='numeric'){
+    bodyHTML = `<div class="numeric-row">
+      <span class="prefix">RD$</span>
+      <input id="numeric-input" type="text" inputmode="decimal" placeholder="Escribe tu respuesta" ${state.answered?'disabled':''} value="${state.answered && state.userAnswer!=='(sin respuesta)' ? state.userAnswer : ''}">
+    </div>
+    ${!state.answered ? `<button class="check-btn" onclick="checkNumericAnswer()">Comprobar</button>` : ''}
+    ${state.answered ? `<div style="margin-top:10px;font-family:var(--font-mono);font-size:0.9rem;color:var(--ink-soft);">Respuesta correcta: ${fmtMoney(q.correct)}</div>` : ''}
+    `;
+  }
+
+  const feedback = state.answered ? `
+    <div class="stamp ${state.isCorrect?'ok':'bad'}">${state.isCorrect?'✓ CORRECTO':'✕ REVISAR'}</div>
+    <div class="explain-note">${q.explain}</div>
+  ` : '';
+
+  const isLast = state.examIndex===total-1;
+
+  return `
+    <div class="topbar">
+      <span class="crumbs">Inicio › Examen › ${topicLabel}</span>
+      <div>
+        <button class="link-btn" onclick="backToTopics()">← Salir</button>
+        <button class="link-btn" onclick="goHome()">🏠 Inicio</button>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div class="exam-paper">
+      <div class="qtag">Pregunta ${state.examIndex+1} de ${total}${tag ? ' · '+tag : ''}</div>
+      <h3>${q.q}</h3>
+      ${bodyHTML}
+      ${feedback}
+      ${state.answered ? `<div class="exam-actions"><button class="btn" onclick="nextQuestion()">${isLast ? 'Ver resultados' : 'Siguiente pregunta →'}</button></div>` : ''}
+    </div>
+  `;
+}
+
+function resultsView(){
+  const correct = state.examAnswers.filter(a=>a.isCorrect).length;
+  const total = state.examAnswers.length;
+  const pct = total ? Math.round((correct/total)*100) : 0;
+  let tier, cls;
+  if(pct>=90){tier='¡EXCELENTE!'; cls='ok';}
+  else if(pct>=75){tier='MUY BIEN'; cls='ok';}
+  else if(pct>=60){tier='APROBADO'; cls='ok';}
+  else {tier='A REPASAR'; cls='bad';}
+
+  const topicLabel = state.topicId==='general' ? 'Repaso General' : topicName(state.topicId);
+
+  const reviewItems = state.examAnswers.map((a,i)=>{
+    const q = a.q;
+    let yourAnsText;
+    if(q.type==='mc') yourAnsText = a.userAnswer;
+    else if(q.type==='tf') yourAnsText = a.userAnswer ? 'Verdadero' : 'Falso';
+    else yourAnsText = (a.userAnswer==='(sin respuesta)') ? 'Sin respuesta' : fmtMoney(a.userAnswer);
+    const tag = state.topicId==='general' ? `${topicIcon(q.topicId)} ${topicName(q.topicId)}` : '';
+    return `
+      <div class="review-item">
+        ${tag ? `<div class="rtag">${tag}</div>` : ''}
+        <div class="rq">${i+1}. ${q.q}</div>
+        <div class="ryour ${a.isCorrect?'ok':'bad'}">${a.isCorrect?'✓':'✕'} Tu respuesta: ${yourAnsText}</div>
+        <div class="rexplain">${q.explain}</div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="topbar">
+      <span class="crumbs">Inicio › Examen › ${topicLabel} › Resultados</span>
+      <button class="link-btn" onclick="goHome()">🏠 Inicio</button>
+    </div>
+    <div class="results-stamp-wrap">
+      <div class="big-stamp ${cls==='ok'?'ok':'bad'}" style="${cls==='ok'?'color:var(--green);border-color:var(--green);':'color:var(--red);border-color:var(--red);'}">${tier}</div>
+      <div class="score-line">${correct} / ${total} correctas (${pct}%)</div>
+    </div>
+    <div class="actions-row">
+      <button class="btn" onclick="retryTopic()">Intentar de nuevo</button>
+      <button class="btn secondary" onclick="backToTopics()">Otro tema</button>
+      <button class="btn gold" onclick="goHome()">Inicio</button>
+    </div>
+    <details class="review-list">
+      <summary class="review-toggle" style="cursor:pointer;font-family:var(--font-mono);text-align:center;color:var(--ink-soft);">Ver revisión completa de las preguntas ▾</summary>
+      ${reviewItems}
+    </details>
+  `;
+}
+
+/* ============== INIT ============== */
+(async function init(){
+  await loadScores();
+  state.view = 'home';
+  render();
+})();
+</script>
+</body>
+</html>
